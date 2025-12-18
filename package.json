@@ -1,0 +1,50 @@
+{
+  "name": "be_venta_servicios",
+  "version": "1.0.0",
+  "description": "PJS360 - Venta de Servicios Profesionales",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
+    "build": "rm -rf dist && tsc",
+    "start": "NODE_ENV=PROD node dist/server.js",
+    "qa": "NODE_ENV=QA node dist/server.js",
+    "migrate": "NODE_ENV=DEV sequelize db:migrate && node dist/server.js",
+    "seed": "NODE_ENV=DEV sequelize-cli db:seed:all",
+    "clean": "rm -rf dist"
+  },
+  "author": "Gabriel Alfaro Cruz",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.10.1",
+    "@types/nodemailer": "^7.0.4",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.28.0",
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "mysql2": "^3.14.1",
+    "node-cache": "^5.1.2",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.3",
+    "pg": "^8.16.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7"
+  }
+}

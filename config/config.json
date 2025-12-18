@@ -1,0 +1,11 @@
+{
+  "DEV": {
+    "username": "postgres",
+    "password": "Jalfaro2012",
+    "database": "BienesRaices",
+    "host": "localhost",
+    "dialect": "postgres",
+    "port": 5432
+  }
+}
+

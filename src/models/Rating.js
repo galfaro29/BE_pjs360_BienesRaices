@@ -5,17 +5,16 @@ export default (sequelize) => {
     'Rating',
     {
       requestId: { type: DataTypes.INTEGER, allowNull: false },
-      professionalId: { 
-          type: DataTypes.INTEGER, 
-          allowNull: false,
-            references: {
+      professionalId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
           model: "Professional",
           key: "userId",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE", 
+        onDelete: "CASCADE",
       },
-      clientId: { type: DataTypes.INTEGER, allowNull: false },
       score: { type: DataTypes.INTEGER, allowNull: false },
       comment: { type: DataTypes.TEXT },
     },

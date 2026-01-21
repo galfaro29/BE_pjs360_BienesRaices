@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
+    "dev": "concurrently \"tsc -w\" \"sleep 4 && NODE_ENV=DEV nodemon dist/server.js\"",
     "build": "rm -rf dist && tsc",
     "start": "NODE_ENV=PROD node dist/server.js",
     "qa": "NODE_ENV=QA node dist/server.js",

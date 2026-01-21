@@ -28,6 +28,16 @@ const register = async (req: RegisterRequest, res: Response) => {
   const locale: SupportedLocale =
     rawLocale === "en" ? "en" : "es";
 
+  const emailDomain = email.split("@")[1]?.toLowerCase() || "";
+
+  const riskyProviders = [
+    "hotmail.com",
+    "outlook.com",
+    "live.com",
+    "msn.com",
+  ];
+
+  const needsManualConfirm = riskyProviders.includes(emailDomain);
   
   try {
     // 1. Validar rol permitido
@@ -139,8 +149,12 @@ const register = async (req: RegisterRequest, res: Response) => {
     user: {
       id: user.id,
       email: user.email,
-      locale: user.locale, 
+      locale: user.locale,
     },
+    needsManualConfirm,
+    confirmUrl: needsManualConfirm
+      ? `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}/${locale}/auth/confirm/${user.token}`
+      : null,
   } satisfies AuthRegisterResponseSuccess);
 
   } catch (error) {

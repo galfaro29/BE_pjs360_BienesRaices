@@ -38,7 +38,7 @@ const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
 
 // 👉 Middleware CORS personalizado
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     // Permite solicitudes sin origin (por ejemplo, herramientas locales)
     // o solicitudes desde orígenes permitidos
     if (!origin || allowedOrigins.includes(origin)) {
@@ -67,7 +67,7 @@ try {
   await db.authenticate(); // Verificar credenciales de conexión
 
   const syncMode = process.env.DB_SYNC_MODE;
-  
+
   if (syncMode === 'force') {
     // ⚠️ Borra y recrea tablas (peligroso para producción)
     await db.sync({ force: true });
@@ -89,7 +89,7 @@ try {
 
   conexDB = true;
 } catch (error) {
-  console.error('❌ Error de conexión a la DB');
+  console.error('❌ Error de conexión a la DB', error);
 }
 
 
@@ -101,7 +101,7 @@ const host = process.env.SERVER_HOST || 'localhost';
 app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/professional', professionalRouter);
-app.use('/client', clientRouter); 
+app.use('/client', clientRouter);
 
 
 // 👉 Iniciar el servidor en el puerto definido

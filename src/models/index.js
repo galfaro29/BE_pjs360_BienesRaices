@@ -12,6 +12,13 @@ import ratingModel from "./Rating.js";
 import notificationModel from "./Notification.js";
 import categoryModel from "./CategoriesClient.js";
 import countryModel from "./Countries.js";
+import stateModel from "./State.js";
+import cityModel from "./City.js";
+import propertyModel from "./Property.js";
+import propertyTypeModel from "./PropertyType.js";
+import propertyStatusModel from "./PropertyStatus.js";
+import amenityModel from "./Amenity.js";
+import propertyImageModel from "./PropertyImage.js";
 import applyAssociations from "./associations.js";
 
 // 3️⃣ Inicializa los modelos
@@ -26,6 +33,13 @@ const models = {
   Notification: notificationModel(db),
   CategoriesClient: categoryModel(db),
   Countries: countryModel(db),
+  State: stateModel(db),
+  City: cityModel(db),
+  Property: propertyModel(db),
+  PropertyType: propertyTypeModel(db),
+  PropertyStatus: propertyStatusModel(db),
+  Amenity: amenityModel(db),
+  PropertyImage: propertyImageModel(db),
 };
 
 /* 
@@ -57,6 +71,13 @@ export const {
   Notification,
   CategoriesClient,
   Countries,
+  State,
+  City,
+  Property,
+  PropertyType,
+  PropertyStatus,
+  Amenity,
+  PropertyImage,
 } = models;
 
 export { db };

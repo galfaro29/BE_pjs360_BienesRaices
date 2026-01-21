@@ -14,8 +14,10 @@ export interface AuthRegisterResponseSuccess {
   user: {
     id: number;
     email: string;
-    locale: string;
+    locale: "es" | "en";
   };
+  needsManualConfirm: boolean;
+  confirmUrl: string | null;
 }
 
 // Respuesta en caso de error

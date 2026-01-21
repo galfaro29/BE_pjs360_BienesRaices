@@ -9,7 +9,7 @@ module.exports = {
 
     if (results.length === 0) {
       // Inserta el usuario client
-      await queryInterface.bulkInsert('User', [{
+      await queryInterface.bulkInsert('"User"', [{
         customId: 'PJS-CLI-2AGWC-250827',
         name: 'Gabito',
         email: 'gabriel.alfaro.cruz@gmail.com',
@@ -20,6 +20,7 @@ module.exports = {
         role: 'client',
         isActive: true,
         locale: 'es',
+        countryCode: 'CR',
         createdAt: new Date('2025-08-27T15:20:47.952Z'),
         updatedAt: new Date('2025-08-27T15:21:02.878Z')
       }], {});
@@ -38,7 +39,7 @@ module.exports = {
       );
 
       if (clientRows.length === 0) {
-        await queryInterface.bulkInsert('Client', [{
+        await queryInterface.bulkInsert('"Client"', [{
           userId: userId,
           fullName: null,
           birthDate: null,
@@ -49,7 +50,6 @@ module.exports = {
           preferredContact: 'WHATSAPP',
           categoryCode: 'C',
           address: null,
-          countryCode: 'CR',
           administrativeAreaLevel1: null,
           administrativeAreaLevel2: null,
           city: null,

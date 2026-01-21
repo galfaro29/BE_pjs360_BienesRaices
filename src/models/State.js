@@ -1,0 +1,25 @@
+import { DataTypes } from 'sequelize';
+
+export default (sequelize) => {
+    /**
+     * Modelo que representa un Estado, Departamento o Provincia.
+     * Se relaciona con Countries y contiene múltiples Cities.
+     */
+    const State = sequelize.define(
+        'State',
+        {
+            name: {
+                type: DataTypes.STRING(100),
+                allowNull: false,
+                comment: 'Nombre del Estado/Provincia (ej. San José, Nuevo León)'
+            },
+        },
+        {
+            tableName: 'States',
+            freezeTableName: true,
+            timestamps: false,
+        }
+    );
+
+    return State;
+};

@@ -47,6 +47,16 @@ export default (sequelize) => {
         allowNull: false,
         defaultValue: 'es',
       },
+      countryCode: {
+        type: DataTypes.STRING(5),
+        allowNull: true, // Puede ser null al inicio hasta que completen perfil
+        references: {
+          model: "Countries",
+          key: "code",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+      },
     },
     {
       tableName: 'User', // 👈 nombre exacto de la tabla

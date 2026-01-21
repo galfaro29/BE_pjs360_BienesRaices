@@ -44,7 +44,7 @@ export default (sequelize) => {
         allowNull: false,
         defaultValue: "WHATSAPP",
       },
-        marketingOptIn: {
+      marketingOptIn: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
@@ -62,16 +62,7 @@ export default (sequelize) => {
       },
       // === Ubicación ===
       address: { type: DataTypes.STRING(255), allowNull: true },
-      countryCode: {
-        type: DataTypes.STRING(5),
-        allowNull: false,
-        references: {
-          model: "Countries",
-          key: "code",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "RESTRICT",
-      },
+
       administrativeAreaLevel1: {
         type: DataTypes.STRING(100),
         allowNull: true,
@@ -93,8 +84,8 @@ export default (sequelize) => {
         type: DataTypes.STRING(255),
         comment: "Ruta del archivo de imagen de perfil",
       },
- 
-    
+
+
 
       // === Facturación ligera ===
       bankName: { type: DataTypes.STRING(100), allowNull: true },
@@ -108,12 +99,12 @@ export default (sequelize) => {
       indexes: [
         { fields: ["userId"], unique: true },
         { fields: ["documentNumber"] },
-        { fields: ["countryCode", "city"] },
+
         { fields: ["administrativeAreaLevel1", "administrativeAreaLevel2"] },
         { fields: ["phone"] },
       ],
     }
   );
-  
+
   return Client;
 };

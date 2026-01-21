@@ -35,10 +35,7 @@ export default (sequelize) => {
         type: DataTypes.STRING(20),
         allowNull: true,
       },
-      country: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-      },
+
       address: {
         type: DataTypes.STRING(255),
         allowNull: true,

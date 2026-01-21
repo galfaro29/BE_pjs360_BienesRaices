@@ -10,7 +10,27 @@ export default (models) => {
     Notification,
     CategoriesClient,
     Countries,
+    State,
+    City,
+    Property,
+    PropertyType,
+
+    PropertyStatus,
+    Amenity,
+    PropertyImage,
   } = models;
+
+  /* ========================USER (Common)=============================*/
+  // User → Country
+  User.belongsTo(Countries, {
+    foreignKey: { name: "countryCode", allowNull: true },
+    targetKey: "code",
+    as: "country",
+  });
+  Countries.hasMany(User, {
+    foreignKey: { name: "countryCode", allowNull: true },
+    as: "users",
+  });
 
   /* ========================CLIENT====================================*/
   // Client → User
@@ -32,22 +52,13 @@ export default (models) => {
     foreignKey: { name: "categoryCode", allowNull: false },
     as: "clients",
   });
-  // Client → Country
-  Client.belongsTo(Countries, {
-    foreignKey: { name: "countryCode", allowNull: false },
-    targetKey: "code",
-    as: "country",
-  });
-  Countries.hasMany(Client, {
-    foreignKey: { name: "countryCode", allowNull: false },
-    as: "clients",
-  });
+
   // Client → Deposit
   Client.hasMany(Deposit, {
     foreignKey: { name: "clientId", allowNull: false },
     as: "deposits",
   });
-    Deposit.belongsTo(Client, {
+  Deposit.belongsTo(Client, {
     foreignKey: { name: "clientId", allowNull: false },
     as: "client",
   });
@@ -70,16 +81,9 @@ export default (models) => {
   });
 
 
+
   /* ==================RATING==========================================*/
-  // Rating → Client
-  Rating.belongsTo(Client, {
-    foreignKey: { name: "clientId", allowNull: false },
-    as: "client",
-  });
-  Client.hasMany(Rating, {
-    foreignKey: { name: "clientId", allowNull: false },
-    as: "ratings",
-  });
+ 
   // Rating → Professional
   Rating.belongsTo(Professional, {
     foreignKey: { name: "professionalId", allowNull: false },
@@ -113,5 +117,39 @@ export default (models) => {
     foreignKey: { name: "userId", allowNull: false },
     as: "notifications",
   });
+
+  /* ================LOCATION============================================*/
+  // Country → State
+  Countries.hasMany(State, { foreignKey: 'countryCode', sourceKey: 'code' });
+  State.belongsTo(Countries, { foreignKey: 'countryCode', targetKey: 'code' });
+
+  // State → City
+  State.hasMany(City, { foreignKey: 'stateId' });
+  City.belongsTo(State, { foreignKey: 'stateId' });
+
+  /* ================PROPERTY============================================*/
+  // Property → PropertyType
+  PropertyType.hasMany(Property, { foreignKey: 'propertyTypeId' });
+  Property.belongsTo(PropertyType, { foreignKey: 'propertyTypeId' });
+
+  // Property → PropertyStatus
+  PropertyStatus.hasMany(Property, { foreignKey: 'propertyStatusId' });
+  Property.belongsTo(PropertyStatus, { foreignKey: 'propertyStatusId' });
+
+  // Property → City (Location)
+  City.hasMany(Property, { foreignKey: 'cityId' });
+  Property.belongsTo(City, { foreignKey: 'cityId' });
+
+  // Property → Professional (Agent) - Replaces User relationship
+  Professional.hasMany(Property, { foreignKey: 'professionalId' });
+  Property.belongsTo(Professional, { foreignKey: 'professionalId' });
+
+  // Property → PropertyImage (Gallery)
+  Property.hasMany(PropertyImage, { foreignKey: 'propertyId' });
+  PropertyImage.belongsTo(Property, { foreignKey: 'propertyId' });
+
+  // Property <-> Amenity (Many-to-Many)
+  Property.belongsToMany(Amenity, { through: 'PropertyAmenities', foreignKey: 'propertyId' });
+  Amenity.belongsToMany(Property, { through: 'PropertyAmenities', foreignKey: 'amenityId' });
 
 };

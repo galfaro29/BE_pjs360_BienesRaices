@@ -18,6 +18,12 @@ export default (sequelize) => {
             tableName: 'PropertyStatuses',
             freezeTableName: true,
             timestamps: false,
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['name']
+                }
+            ]
         }
     );
 

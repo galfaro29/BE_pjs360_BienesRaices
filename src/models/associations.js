@@ -16,8 +16,12 @@ export default (models) => {
     PropertyType,
 
     PropertyStatus,
-    Amenity,
+    PropertyAmenity,
     PropertyImage,
+    ClientSubscription,
+    AgentSubscription,
+    PropertyPublication,
+    AuditLog,
   } = models;
 
   /* ========================USER (Common)=============================*/
@@ -30,6 +34,26 @@ export default (models) => {
   Countries.hasMany(User, {
     foreignKey: { name: "countryCode", allowNull: true },
     as: "users",
+  });
+
+  // User → ClientSubscription
+  User.hasOne(ClientSubscription, {
+    foreignKey: { name: "userId", allowNull: false },
+    as: "clientSubscription",
+  });
+  ClientSubscription.belongsTo(User, {
+    foreignKey: { name: "userId", allowNull: false },
+    as: "user",
+  });
+
+  // User → AgentSubscription
+  User.hasOne(AgentSubscription, {
+    foreignKey: { name: "agentUserId", allowNull: false },
+    as: "agentSubscription",
+  });
+  AgentSubscription.belongsTo(User, {
+    foreignKey: { name: "agentUserId", allowNull: false },
+    as: "user",
   });
 
   /* ========================CLIENT====================================*/
@@ -83,7 +107,7 @@ export default (models) => {
 
 
   /* ==================RATING==========================================*/
- 
+
   // Rating → Professional
   Rating.belongsTo(Professional, {
     foreignKey: { name: "professionalId", allowNull: false },
@@ -140,6 +164,10 @@ export default (models) => {
   City.hasMany(Property, { foreignKey: 'cityId' });
   Property.belongsTo(City, { foreignKey: 'cityId' });
 
+  // Property → User (Creator)
+  User.hasMany(Property, { foreignKey: 'userId', as: 'properties' });
+  Property.belongsTo(User, { foreignKey: 'userId', as: 'creator' });
+
   // Property → Professional (Agent) - Replaces User relationship
   Professional.hasMany(Property, { foreignKey: 'professionalId' });
   Property.belongsTo(Professional, { foreignKey: 'professionalId' });
@@ -148,8 +176,12 @@ export default (models) => {
   Property.hasMany(PropertyImage, { foreignKey: 'propertyId' });
   PropertyImage.belongsTo(Property, { foreignKey: 'propertyId' });
 
-  // Property <-> Amenity (Many-to-Many)
-  Property.belongsToMany(Amenity, { through: 'PropertyAmenities', foreignKey: 'propertyId' });
-  Amenity.belongsToMany(Property, { through: 'PropertyAmenities', foreignKey: 'amenityId' });
+  // Property <-> PropertyAmenity (Many-to-Many)
+  Property.belongsToMany(PropertyAmenity, { through: 'PropertyAmenities', foreignKey: 'propertyId', as: 'amenities' });
+  PropertyAmenity.belongsToMany(Property, { through: 'PropertyAmenities', foreignKey: 'amenityId', as: 'properties' });
+
+  // User <-> AuditLog
+  User.hasMany(AuditLog, { foreignKey: 'userId', as: 'auditLogs' });
+  AuditLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
 };

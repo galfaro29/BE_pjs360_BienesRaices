@@ -6,8 +6,8 @@ export default (sequelize) => {
      * Ejemplos: Piscina, Gimnasio, Seguridad 24/7, Jardín, Aire Acondicionado.
      * Se relaciona N:M con Property.
      */
-    const Amenity = sequelize.define(
-        'Amenity',
+    const PropertyAmenity = sequelize.define(
+        'PropertyAmenity',
         {
             name: {
                 type: DataTypes.STRING(100),
@@ -27,5 +27,5 @@ export default (sequelize) => {
         }
     );
 
-    return Amenity;
+    return PropertyAmenity;
 };

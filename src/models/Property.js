@@ -15,6 +15,11 @@ export default (sequelize) => {
                 primaryKey: true,
                 comment: 'Identificador único de la propiedad (UUID)'
             },
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                comment: 'ID del usuario que creó la propiedad'
+            },
             title: {
                 type: DataTypes.STRING(150),
                 allowNull: false,
@@ -75,16 +80,90 @@ export default (sequelize) => {
                 allowNull: true,
                 comment: 'Coordenada Longitud para mapas'
             },
-            isFeatured: {
-                type: DataTypes.BOOLEAN,
-                defaultValue: false,
-                comment: 'Indica si la propiedad está destacada en la home'
+            status: {
+                type: DataTypes.ENUM(
+                    'BORRADOR',
+                    'ACTIVA',
+                    'INACTIVA',
+                    'ELIMINADA'
+                ),
+                defaultValue: 'BORRADOR',
+                allowNull: false
             },
+            viewsCount: {
+                type: DataTypes.INTEGER,
+                defaultValue: 0,
+                comment: 'Cantidad de vistas'
+            }
         },
         {
             tableName: 'Properties',
             freezeTableName: true,
-            timestamps: true, // Crea createdAt y updatedAt automáticamente
+            timestamps: true,
+            hooks: {
+                /**
+                 * Hook genérico para registrar auditoría.
+                 * Nota: Sequelize no pasa automáticamente el usuario logueado en los hooks
+                 * a menos que se pase explícitamente en las opciones (options.userId).
+                 */
+                afterCreate: async (property, options) => {
+                    const { AuditLog } = property.sequelize.models;
+                    await AuditLog.create({
+                        entityName: 'Property',
+                        entityId: property.id,
+                        userId: options.userId || null,
+                        action: 'INSERT',
+                        newValues: property.toJSON(),
+                        ipAddress: options.ipAddress || null,
+                        userAgent: options.userAgent || null,
+                        source: options.source || 'SYSTEM',
+                        reason: options.reason || null
+                    });
+                },
+                afterUpdate: async (property, options) => {
+                    const { AuditLog } = property.sequelize.models;
+                    await AuditLog.create({
+                        entityName: 'Property',
+                        entityId: property.id,
+                        userId: options.userId || null,
+                        action: 'UPDATE',
+                        oldValues: property._previousDataValues,
+                        newValues: property.toJSON(),
+                        ipAddress: options.ipAddress || null,
+                        userAgent: options.userAgent || null,
+                        source: options.source || 'SYSTEM',
+                        reason: options.reason || null
+                    });
+                },
+                afterDestroy: async (property, options) => {
+                    const { AuditLog } = property.sequelize.models;
+                    await AuditLog.create({
+                        entityName: 'Property',
+                        entityId: property.id,
+                        userId: options.userId || null,
+                        action: options.force ? 'DELETE' : 'SOFT_DELETE',
+                        oldValues: property.toJSON(),
+                        ipAddress: options.ipAddress || null,
+                        userAgent: options.userAgent || null,
+                        source: options.source || 'SYSTEM',
+                        reason: options.reason || null
+                    });
+                },
+                afterRestore: async (property, options) => {
+                    const { AuditLog } = property.sequelize.models;
+                    await AuditLog.create({
+                        entityName: 'Property',
+                        entityId: property.id,
+                        userId: options.userId || null,
+                        action: 'RESTORE',
+                        newValues: property.toJSON(),
+                        ipAddress: options.ipAddress || null,
+                        userAgent: options.userAgent || null,
+                        source: options.source || 'SYSTEM',
+                        reason: options.reason || null
+                    });
+                }
+            }
         }
     );
 

@@ -17,8 +17,12 @@ import cityModel from "./City.js";
 import propertyModel from "./Property.js";
 import propertyTypeModel from "./PropertyType.js";
 import propertyStatusModel from "./PropertyStatus.js";
-import amenityModel from "./Amenity.js";
+import propertyAmenityModel from "./PropertyAmenity.js";
 import propertyImageModel from "./PropertyImage.js";
+import clientSubscriptionModel from "./ClientSubscription.js";
+import agentSubscriptionModel from "./AgentSubscription.js";
+import propertyPublicationModel from "./PropertyPublication.js";
+import auditLogModel from "./AuditLog.js";
 import applyAssociations from "./associations.js";
 
 // 3️⃣ Inicializa los modelos
@@ -38,8 +42,12 @@ const models = {
   Property: propertyModel(db),
   PropertyType: propertyTypeModel(db),
   PropertyStatus: propertyStatusModel(db),
-  Amenity: amenityModel(db),
+  PropertyAmenity: propertyAmenityModel(db),
   PropertyImage: propertyImageModel(db),
+  ClientSubscription: clientSubscriptionModel(db),
+  AgentSubscription: agentSubscriptionModel(db),
+  PropertyPublication: propertyPublicationModel(db),
+  AuditLog: auditLogModel(db),
 };
 
 /* 
@@ -76,8 +84,12 @@ export const {
   Property,
   PropertyType,
   PropertyStatus,
-  Amenity,
+  PropertyAmenity,
   PropertyImage,
+  ClientSubscription,
+  AgentSubscription,
+  PropertyPublication,
+  AuditLog,
 } = models;
 
 export { db };

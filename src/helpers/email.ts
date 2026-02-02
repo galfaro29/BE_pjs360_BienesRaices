@@ -1,5 +1,5 @@
 import nodemailer, { Transporter, SendMailOptions } from "nodemailer";
-import {SupportedLocale} from "../types/index.js";
+import { SupportedLocale } from "../types/index.js";
 import { EMAIL_MESSAGES } from "./emailMessagesLocale.js";
 
 /**
@@ -75,11 +75,14 @@ export const confirmEmailToken = async ({
 
   const roleText = roleTextMap[locale][role] ?? "Usuario";
 
+  const appName = process.env.APP_NAME;
+  const appUrl = process.env.APP_URL;
+
   const emailData: SendEmailData = {
-    from: `"PJS360" <${process.env.EMAIL_USER}>`,
+    from: `"${appName}" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: t.subjectConfirm(roleText),
-    text: "Confirma tu cuenta en PJS360.com",
+    text: `Confirma tu cuenta en ${(appUrl || '').replace(/^https?:\/\//, '')}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background-color: #f4f4f4; padding: 20px; border-radius: 10px;">
         <div style="text-align: center;">
@@ -127,8 +130,10 @@ export const resetPasswordToken = async ({
 }: ResetPasswordEmailData): Promise<void> => {
   const t = EMAIL_MESSAGES[locale];
 
+  const appName = process.env.APP_NAME;
+
   const emailData: SendEmailData = {
-    from: `"PJS360" <${process.env.EMAIL_USER}>`,
+    from: `"${appName}" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: t.subjectResetPassword,
     text: t.textResetPassword,

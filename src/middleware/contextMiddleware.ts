@@ -63,7 +63,7 @@ export const ensureRequestContext = (req: Request, res: Response, next: NextFunc
         source
     };
 
-    console.log(`🔧 [ensureRequestContext] Re-binding context for: id=${userId}, url=${req.url}`);
+    //console.log(`🔧 [ensureRequestContext] Re-binding context for: id=${userId}, url=${req.url}`);
 
     requestContext.run(context, () => {
         next();

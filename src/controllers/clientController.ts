@@ -66,7 +66,7 @@ const updateClientProfile = async (req: any, res: any) => {
     const userId = req.user.id;
     const customId = req.user.customId;
 
-    console.log(`👤 [updateClientProfile] START: userId=${userId}, customId=${customId}, storeFound=${!!requestContext.getStore()}`);
+    //console.log(`👤 [updateClientProfile] START: userId=${userId}, customId=${customId}, storeFound=${!!requestContext.getStore()}`);
 
     const {
       // Identificación

@@ -39,7 +39,7 @@ export const authMiddleware = (
 
     // Actualizar el contexto de la solicitud con el customId del usuario
     const store = requestContext.getStore();
-    console.log(`🔒 [authMiddleware] Found store: ${!!store}, updating userId to: ${decoded.customId}`);
+    //console.log(`🔒 [authMiddleware] Found store: ${!!store}, updating userId to: ${decoded.customId}`);
     if (store) {
       store.userId = decoded.customId;
     }

@@ -13,7 +13,7 @@ export const generarJWT = (datos: JwtUserData): string => {
   }
 
   const expiresIn =
-  (process.env.JWT_EXPIRES_IN as SignOptions["expiresIn"]) ?? "1d";
+    (process.env.JWT_EXPIRES_IN as SignOptions["expiresIn"]) ?? "1d";
 
   const options: SignOptions = {
     expiresIn,
@@ -22,6 +22,7 @@ export const generarJWT = (datos: JwtUserData): string => {
   return jwt.sign(
     {
       id: datos.id,
+      customId: datos.customId,
       name: datos.name,
       role: datos.role,
     },

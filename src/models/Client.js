@@ -31,12 +31,12 @@ export default (sequelize) => {
       phone: {
         type: DataTypes.STRING(20),
         allowNull: true,
-        validate: { is: /^\+?[0-9\s\-()]{8,20}$/i },
+        validate: { is: /^(\+?[0-9\s\-()]{7,20})?$/i },
       },
       altPhone: {
         type: DataTypes.STRING(20),
         allowNull: true,
-        validate: { is: /^\+?[0-9\s\-()]{8,20}$/i },
+        validate: { is: /^(\+?[0-9\s\-()]{7,20})?$/i },
         comment: "Teléfono alterno",
       },
       preferredContact: {

@@ -1,9 +1,11 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { ApiErrorResponse } from "../types/index.js";
+import { requestContext } from "../helpers/requestContext.js";
 
 interface JwtUserPayload extends JwtPayload {
   id: number;
+  customId: string;
   role: string;
 }
 
@@ -31,8 +33,16 @@ export const authMiddleware = (
 
     req.user = {
       id: decoded.id,
+      customId: decoded.customId,
       role: decoded.role,
     };
+
+    // Actualizar el contexto de la solicitud con el customId del usuario
+    const store = requestContext.getStore();
+    console.log(`🔒 [authMiddleware] Found store: ${!!store}, updating userId to: ${decoded.customId}`);
+    if (store) {
+      store.userId = decoded.customId;
+    }
 
     next();
   } catch (err: unknown) {

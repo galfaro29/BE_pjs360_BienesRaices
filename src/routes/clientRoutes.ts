@@ -3,7 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-import { authMiddleware, roleMiddleware } from "../middleware/index.js";
+import { authMiddleware, roleMiddleware, ensureRequestContext } from "../middleware/index.js";
 import {
   getClientDashboard,
   updateClientProfile,
@@ -47,6 +47,7 @@ router.post(
   authMiddleware,
   roleMiddleware("client"),
   upload.single("image"), // Maneja una sola imagen con campo "image"
+  ensureRequestContext,    // 🔧 Asegura que el contexto sobreviva a multer
   updateClientProfile
 );
 

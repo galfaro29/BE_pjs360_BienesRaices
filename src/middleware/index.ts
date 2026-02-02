@@ -22,3 +22,4 @@ export { roleMiddleware } from './roleMiddleware.js';
 //   • Responde con 401 si el usuario no existe.
 //   • Responde con 403 si el usuario está inactivo.
 export { loadUserMiddleware } from './loadUserMiddleware.js';
+export { default as contextMiddleware, ensureRequestContext } from './contextMiddleware.js';

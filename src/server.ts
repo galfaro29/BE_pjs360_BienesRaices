@@ -25,13 +25,15 @@ dotenv.config();
 // 👉 Crear la instancia principal de la aplicación Express
 const app = express();
 
+// 👉 Middleware de contexto global (DEBE IR ANTES QUE TODO PARA CAPTURAR EL CICLO COMPLETO)
+app.use(contextMiddleware);
+
 // 👉 Habilitar el parseo de cookies HTTP entrantes
 app.use(cookieParser());
 
 // 👉 Habilitar el parseo de JSON en solicitudes (req.body)
 app.use(express.json());
 
-//Archivos e imagenes
 app.use(express.static(path.join(process.cwd(), "public")));
 
 // 👉 Configurar lista de orígenes permitidos para CORS desde variable de entorno
@@ -105,9 +107,6 @@ app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/professional', professionalRouter);
 app.use('/client', clientRouter);
-
-// 👉 Middleware de contexto global (después de auth para tener req.user)
-app.use(contextMiddleware);
 
 
 // 👉 Iniciar el servidor en el puerto definido

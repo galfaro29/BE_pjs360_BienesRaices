@@ -1,16 +1,17 @@
 // **LIBRERÍAS NPM**  
-import bcrypt from 'bcrypt';  
+import bcrypt from 'bcrypt';
 import fs from "fs";
 import path from "path";
 
 // **MODELO DE USUARIO**  
 import { Client, User } from '../models/index.js';
+import { requestContext } from '../helpers/requestContext.js';
 
 
 
 // GET /client/dashboard
 const getClientDashboard = (req: any, res: any) => {
-  
+
   res.json({
     code: 'SUCCESS_CLIENT_DASHBOARD',
     user: req.user
@@ -21,12 +22,12 @@ const getClientDashboard = (req: any, res: any) => {
 // Se asume que el middleware authMiddleware ya ha verificado la autenticación y el rol
 // y que el usuario está disponible en req.user
 const getClientProfile = async (req: any, res: any) => {
-  
+
   res.json({
     code: "SUCCESS_CLIENT_PROFILE",
     user: req.user,
-  }); 
-}; 
+  });
+};
 
 // GET /client/profile/:id   -> :id = User.id
 const getClientProfileById = async (req: any, res: any) => {
@@ -34,8 +35,8 @@ const getClientProfileById = async (req: any, res: any) => {
   const userId = Number(id);
 
   if (!id || Number.isNaN(userId)) {
-    return res.status(400).json({code: "ERR_VALIDATION_ID"});
-} 
+    return res.status(400).json({ code: "ERR_VALIDATION_ID" });
+  }
 
   try {
     const client = await Client.findOne({
@@ -48,23 +49,26 @@ const getClientProfileById = async (req: any, res: any) => {
           attributes: ["email"], // agrega más si lo requieres (email, customId, etc.)
         },
       ],
-       attributes: { exclude: ["createdAt", "updatedAt"] }, // opcional
+      attributes: { exclude: ["createdAt", "updatedAt"] }, // opcional
     });
 
     // 🔍 Verificar que el usuario existe y no es nula
     if (!client) {
       return res.status(404).json({ code: "ERR_CLIENT_NOT_FOUND" });
     }
-    return res.json({code: "SUCCESS_QUERY_USER_ALL_CLIENT",client});
+    return res.json({ code: "SUCCESS_QUERY_USER_ALL_CLIENT", client });
   } catch (err) {
     console.error("❌ ERR_QUERY_USER_ALL_CLIENT:", err);
-    return res.status(500).json({code: "ERR_QUERY_USER_ALL_CLIENT"});
+    return res.status(500).json({ code: "ERR_QUERY_USER_ALL_CLIENT" });
   }
 };
 
 const updateClientProfile = async (req: any, res: any) => {
   try {
     const userId = req.user.id;
+    const customId = req.user.customId;
+
+    console.log(`👤 [updateClientProfile] START: userId=${userId}, customId=${customId}, storeFound=${!!requestContext.getStore()}`);
 
     const {
       // Identificación
@@ -119,6 +123,7 @@ const updateClientProfile = async (req: any, res: any) => {
     }
 
     // 📝 Crear o actualizar perfil (simple, solo lo que venga en el body)
+    console.log(`🚀 [updateClientProfile] PRE-UPSERT: storeFound=${!!requestContext.getStore()}`);
     await Client.upsert({
       userId,
       fullName,

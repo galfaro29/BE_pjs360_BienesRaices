@@ -3,10 +3,11 @@ import bcrypt from "bcrypt"; // Para encriptar y comparar contraseñas
 import type { Response } from "express";
 
 // **MODELO Y HELPERS**  
-import { User,Client, Professional } from "../models/index.js"; // Modelo Sequelize de usuarios  
+import { User, Client, Professional } from "../models/index.js"; // Modelo Sequelize de usuarios  
 import { generarJWT, generarId } from "../helpers/tokens.js";  // Generar JWT y IDs únicos  
 import { confirmEmailToken, resetPasswordToken } from "../helpers/email.js"; // Envío de emails
 import { generateCustomId } from "../helpers/generator.js"; // Generación de ID personalizado
+import { requestContext } from "../helpers/requestContext.js";
 import { RegisterRequest, AuthRegisterResponseSuccess } from "../types/index.js";
 import type { SupportedLocale } from "../types/index.js";
 
@@ -38,7 +39,7 @@ const register = async (req: RegisterRequest, res: Response) => {
   ];
 
   const needsManualConfirm = riskyProviders.includes(emailDomain);
-  
+
   try {
     // 1. Validar rol permitido
     if (!["client", "professional"].includes(role)) {
@@ -63,6 +64,13 @@ const register = async (req: RegisterRequest, res: Response) => {
 
     // 5. Crear usuario
     const isActive = role === "client";
+
+    // Actualizar el contexto de la solicitud con el customId generado para la auditoría
+    const store = requestContext.getStore();
+    if (store) {
+      store.userId = customId;
+    }
+
     const user = await User.create({
       name,
       email,
@@ -144,18 +152,18 @@ const register = async (req: RegisterRequest, res: Response) => {
     });
 
     // 9. Respuesta exitosa
-   return res.status(201).json({
-    code: "SUCCESS_USER_REGISTERED",
-    user: {
-      id: user.id,
-      email: user.email,
-      locale: user.locale,
-    },
-    needsManualConfirm,
-    confirmUrl: needsManualConfirm
-      ? `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}/${locale}/auth/confirm/${user.token}`
-      : null,
-  } satisfies AuthRegisterResponseSuccess);
+    return res.status(201).json({
+      code: "SUCCESS_USER_REGISTERED",
+      user: {
+        id: user.id,
+        email: user.email,
+        locale: user.locale,
+      },
+      needsManualConfirm,
+      confirmUrl: needsManualConfirm
+        ? `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}/${locale}/auth/confirm/${user.token}`
+        : null,
+    } satisfies AuthRegisterResponseSuccess);
 
   } catch (error) {
     console.error("❌ Error en register:", error);
@@ -187,6 +195,12 @@ const confirmAccount = async (req: any, res: any) => {
       user.isActive = true;
     } else { // professional
       user.isActive = false;
+    }
+
+    // Actualizar el contexto de la solicitud con el customId para la auditoría
+    const store = requestContext.getStore();
+    if (store) {
+      store.userId = user.customId;
     }
 
     await user.save();
@@ -258,7 +272,7 @@ const login = async (req: any, res: any) => {
     }
 
     // Generar JWT y enviarlo en cookie segura
-    const token = generarJWT({ id: user.id, name: user.name, role: user.role });
+    const token = generarJWT({ id: user.id, customId: user.customId, name: user.name, role: user.role });
     res.cookie(process.env.COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.COOKIE_HTTPS === "true",
@@ -310,7 +324,7 @@ const forgotPassword = async (req: any, res: any) => {
       return res.status(404).json({ code: "ERR_USER_NOT_FOUND" });
     }
 
-        // Validar que el usuario haya sido confirmado
+    // Validar que el usuario haya sido confirmado
     if (!user.confirmado) {
       console.log("login:", "ERR_NOT_CONFIRMED");
       return res.status(403).json({ code: "ERR_NOT_CONFIRMED" });
@@ -341,7 +355,7 @@ const forgotPassword = async (req: any, res: any) => {
  */
 const verifyToken = async (req: any, res: any) => {
   const { token } = req.params;
-  
+
   try {
     const user = await User.findOne({ where: { token } });
     if (!user) {

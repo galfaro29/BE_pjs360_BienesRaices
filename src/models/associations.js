@@ -181,7 +181,7 @@ export default (models) => {
   PropertyAmenity.belongsToMany(Property, { through: 'PropertyAmenities', foreignKey: 'amenityId', as: 'properties' });
 
   // User <-> AuditLog
-  User.hasMany(AuditLog, { foreignKey: 'userId', as: 'auditLogs' });
-  AuditLog.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+  User.hasMany(AuditLog, { foreignKey: 'userId', sourceKey: 'customId', as: 'auditLogs', constraints: false });
+  AuditLog.belongsTo(User, { foreignKey: 'userId', targetKey: 'customId', as: 'user', constraints: false });
 
 };

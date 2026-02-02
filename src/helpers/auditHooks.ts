@@ -39,8 +39,13 @@ export default function addAuditHooks(Model: ModelStatic<Model>, sequelize: Sequ
     /**
      * Obtiene el contexto actual de la solicitud desde AsyncLocalStorage.
      */
-    const getContext = (): RequestContext => {
+    const getContext = (source: string = 'HOOK'): RequestContext => {
         const store = requestContext.getStore();
+        if (!store) {
+            console.warn(`🔴 [${source}] MISSING RequestContext store for ${Model.name}`);
+        } else {
+            // console.log(`🟢 [${source}] Found store for ${Model.name}: userId=${store.userId}`);
+        }
         return store || {
             userId: null,
             ipAddress: null,
@@ -49,9 +54,18 @@ export default function addAuditHooks(Model: ModelStatic<Model>, sequelize: Sequ
         };
     };
 
+    // Hook: Antes de Crear (Para capturar contexto)
+    Model.beforeCreate(async (instance: any, options: any) => {
+        options._auditContext = getContext('beforeCreate');
+    });
+
     // Hook: Después de Crear
     Model.afterCreate(async (instance: any, options: any) => {
-        const context = getContext();
+        // Evitamos duplicados si viene de un Upsert (Sequelize dispara afterCreate o afterUpdate internamente)
+        if (options._isUpsert || options.type === 'UPSERT') return;
+
+        const context = options._auditContext || getContext('afterCreate');
+        // console.log(`✨ [afterCreate] Model=${Model.name}, userId=${context.userId}`);
         await (AuditLog as any).create({
             entityName: Model.name,
             entityId: instance[Model.primaryKeyAttribute as string] || instance.id,
@@ -64,9 +78,18 @@ export default function addAuditHooks(Model: ModelStatic<Model>, sequelize: Sequ
         });
     });
 
+    // Hook: Antes de Actualizar (Para capturar contexto)
+    Model.beforeUpdate(async (instance: any, options: any) => {
+        options._auditContext = getContext('beforeUpdate');
+    });
+
     // Hook: Después de Actualizar
     Model.afterUpdate(async (instance: any, options: any) => {
-        const context = getContext();
+        // Evitamos duplicados si viene de un Upsert
+        if (options._isUpsert || options.type === 'UPSERT') return;
+
+        const context = options._auditContext || getContext('afterUpdate');
+        // console.log(`📝 [afterUpdate] Model=${Model.name}, userId=${context.userId}`);
         await (AuditLog as any).create({
             entityName: Model.name,
             entityId: instance[Model.primaryKeyAttribute as string] || instance.id,
@@ -80,9 +103,14 @@ export default function addAuditHooks(Model: ModelStatic<Model>, sequelize: Sequ
         });
     });
 
+    // Hook: Antes de Eliminar
+    Model.beforeDestroy(async (instance: any, options: any) => {
+        options._auditContext = getContext('beforeDestroy');
+    });
+
     // Hook: Después de Eliminar (incluye soft delete si se usa)
     Model.afterDestroy(async (instance: any, options: any) => {
-        const context = getContext();
+        const context = options._auditContext || getContext();
         // @ts-ignore
         const isSoftDelete = options.truncate === undefined && instance.constructor.options.paranoid && instance.deletedAt;
 
@@ -98,10 +126,16 @@ export default function addAuditHooks(Model: ModelStatic<Model>, sequelize: Sequ
         });
     });
 
+    // Hook: Antes de Restaurar
+    // @ts-ignore
+    Model.beforeRestore(async (instance: any, options: any) => {
+        options._auditContext = getContext('beforeRestore');
+    });
+
     // Hook: Después de Restaurar
     // @ts-ignore
     Model.afterRestore(async (instance: any, options: any) => {
-        const context = getContext();
+        const context = options._auditContext || getContext();
         await (AuditLog as any).create({
             entityName: Model.name,
             entityId: instance[Model.primaryKeyAttribute as string] || instance.id,
@@ -114,5 +148,57 @@ export default function addAuditHooks(Model: ModelStatic<Model>, sequelize: Sequ
         });
     });
 
-    console.log(`✅ Audit hooks attached to: ${Model.name}`);
+    // Hook: Antes de Upsert (Para capturar datos y contexto)
+    // @ts-ignore
+    Model.beforeUpsert(async (values: any, options: any) => {
+        const context = getContext('beforeUpsert');
+        // console.log(`🔍 [beforeUpsert] Model=${Model.name}, userId=${context.userId}`);
+        // Adjuntamos el contexto y los valores originales a las opciones para que afterUpsert los use
+        options._auditContext = context;
+        options._auditValues = { ...values };
+        options._isUpsert = true; // Flag para evitar duplicados en afterUpdate/afterCreate
+    });
+
+    // Hook: Después de Upsert (Importante para actualizaciones de perfil)
+    // @ts-ignore
+    Model.afterUpsert(async (created: any, options: any) => {
+        // Recuperamos el contexto capturado en beforeUpsert (más confiable)
+        const context = options._auditContext || getContext('afterUpsert');
+        const modelData = options._auditValues || options.modelData || options.attributes || {};
+
+        // console.log(`🔄 [afterUpsert] Processing ${Model.name}: contextUserId=${context.userId}, source=${context.source}`);
+        let entityId = 'UPSERT';
+
+        if (options.where) {
+            entityId = JSON.stringify(options.where);
+        } else {
+            // Buscamos llaves primarias comunes en modelData
+            const pk = (Model.primaryKeyAttribute as string) || 'id';
+            // Intentamos obtener el ID de varias formas comunes en upsert/modelData
+            const val = modelData[pk] ||
+                modelData.userId ||
+                modelData.id ||
+                modelData.customId ||
+                (options.attributes && options.attributes[pk]);
+
+            if (val) {
+                entityId = val.toString();
+            } else {
+                entityId = `UPSERT-${Model.name}`; // Fallback más informativo
+            }
+        }
+
+        await (AuditLog as any).create({
+            entityName: Model.name,
+            entityId: entityId.substring(0, 100),
+            action: 'UPDATE',
+            newValues: modelData,
+            userId: context.userId,
+            ipAddress: context.ipAddress,
+            userAgent: context.userAgent,
+            source: context.source
+        });
+    });
+
+    //console.log(`✅ Audit hooks attached to: ${Model.name}`);
 }

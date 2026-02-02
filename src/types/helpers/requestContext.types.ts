@@ -1,5 +1,5 @@
 export interface RequestContext {
-    userId: number | null;
+    userId: string | number | null;
     ipAddress: string | null;
     userAgent: string | null;
     source: string;

@@ -9,22 +9,25 @@ export default (sequelize) => {
         'AuditLog',
         {
             id: {
-                type: DataTypes.UUID,
-                defaultValue: DataTypes.UUIDV4,
-                primaryKey: true
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true,
+                comment: 'ID incremental único del registro de auditoría'
             },
             entityName: {
                 type: DataTypes.STRING(50),
-                allowNull: false
+                allowNull: false,
+                comment: 'Nombre de la tabla/modelo afectado (ej: User, Property, Client)'
             },
             entityId: {
                 type: DataTypes.STRING(100),
-                allowNull: false
+                allowNull: false,
+                comment: 'ID del registro afectado en la tabla original (Primary Key)'
             },
             userId: {
-                type: DataTypes.INTEGER, // Ajustado a INTEGER para coincidir con User.id
+                type: DataTypes.STRING(100),
                 allowNull: true,
-                comment: 'ID del usuario que realizó la acción'
+                comment: 'ID personalizado (customId) del usuario que realizó la acción'
             },
             action: {
                 type: DataTypes.ENUM(
@@ -38,11 +41,13 @@ export default (sequelize) => {
             },
             oldValues: {
                 type: DataTypes.JSONB,
-                allowNull: true
+                allowNull: true,
+                comment: 'Estado del registro antes del cambio (solo en UPDATE/DELETE)'
             },
             newValues: {
                 type: DataTypes.JSONB,
-                allowNull: true
+                allowNull: true,
+                comment: 'Estado del registro después del cambio (en INSERT/UPDATE/RESTORE)'
             },
             source: {
                 type: DataTypes.ENUM('USER', 'ADMIN', 'AGENT', 'SYSTEM'),
@@ -50,15 +55,18 @@ export default (sequelize) => {
             },
             reason: {
                 type: DataTypes.STRING(255),
-                allowNull: true
+                allowNull: true,
+                comment: 'Motivo opcional del cambio (si se proporciona)'
             },
             ipAddress: {
                 type: DataTypes.STRING(45),
-                allowNull: true
+                allowNull: true,
+                comment: 'Dirección IP desde la que se realizó la petición'
             },
             userAgent: {
                 type: DataTypes.TEXT,
-                allowNull: true
+                allowNull: true,
+                comment: 'Información del navegador/dispositivo del usuario'
             }
         },
         {

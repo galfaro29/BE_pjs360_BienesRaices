@@ -7,8 +7,6 @@ import path from "path";
 import { Client, User } from '../models/index.js';
 import { requestContext } from '../helpers/requestContext.js';
 
-
-
 // GET /client/dashboard
 const getClientDashboard = (req: any, res: any) => {
 
@@ -123,7 +121,7 @@ const updateClientProfile = async (req: any, res: any) => {
     }
 
     // 📝 Crear o actualizar perfil (simple, solo lo que venga en el body)
-    console.log(`🚀 [updateClientProfile] PRE-UPSERT: storeFound=${!!requestContext.getStore()}`);
+    //console.log(`🚀 [updateClientProfile] PRE-UPSERT: storeFound=${!!requestContext.getStore()}`);
     await Client.upsert({
       userId,
       fullName,

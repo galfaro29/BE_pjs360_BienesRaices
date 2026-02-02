@@ -28,7 +28,7 @@ const contextMiddleware = (req: Request, res: Response, next: NextFunction): voi
     };
 
     // Log para depuración
-    console.log(`🌐 [contextMiddleware] Zone START: id=${userId}, ip=${ipAddress}, url=${req.url}`);
+    //console.log(`🌐 [contextMiddleware] Zone START: id=${userId}, ip=${ipAddress}, url=${req.url}`);
 
     requestContext.run(context, () => {
         next();

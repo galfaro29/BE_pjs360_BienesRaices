@@ -13,6 +13,9 @@ import {
   clientRouter,
 } from './routes/index.js';
 
+// 👉 Importar middleware de contexto para auditoría
+import contextMiddleware from './middleware/contextMiddleware.js';
+
 // 👉 Importar instancia de la base de datos Sequelize
 import { db } from './models/index.js';
 
@@ -102,6 +105,9 @@ app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/professional', professionalRouter);
 app.use('/client', clientRouter);
+
+// 👉 Middleware de contexto global (después de auth para tener req.user)
+app.use(contextMiddleware);
 
 
 // 👉 Iniciar el servidor en el puerto definido

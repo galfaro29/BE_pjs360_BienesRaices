@@ -24,6 +24,9 @@ import agentSubscriptionModel from "./AgentSubscription.js";
 import propertyPublicationModel from "./PropertyPublication.js";
 import auditLogModel from "./AuditLog.js";
 import applyAssociations from "./associations.js";
+import addAuditHooks from "../helpers/auditHooks.js"; //Auditoría automática (INSERT/UPDATE/DELETE) sin tocar
+//controladores, usando AsyncLocalStorage. Incluye: - requestContext global - middleware Express -
+//addAuditHooks genérico - activación en models/index.js
 
 // 3️⃣ Inicializa los modelos
 const models = {
@@ -50,22 +53,15 @@ const models = {
   AuditLog: auditLogModel(db),
 };
 
-/* 
-// 4️⃣ Ejecuta las asociaciones de cada modelo
-Object.entries(models).forEach(([name, model]) => {
-  if (typeof model.associate === "function") {
-    try {
-      model.associate(models);
-      console.log(`✅ Asociaciones cargadas: ${name}`);
-    } catch (error) {
-      console.error(`❌ Error en asociaciones de ${name}:`, error.message);
-    }
-  }
-});
-*/
 
 applyAssociations(models);
 console.log("🔥 Asociaciones aplicadas desde associations.js");
+
+// 5️⃣ Aplicar hooks de auditoría automáticos
+Object.values(models).forEach(model => {
+  addAuditHooks(model, db);
+});
+console.log("📝 Hooks de auditoría aplicados");
 
 // 5️⃣ Exportaciones
 export const {

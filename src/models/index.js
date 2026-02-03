@@ -16,13 +16,20 @@ import stateModel from "./State.js";
 import cityModel from "./City.js";
 import propertyModel from "./Property.js";
 import propertyTypeModel from "./PropertyType.js";
-import propertyStatusModel from "./PropertyStatus.js";
+import propertyOfferTypeModel from "./PropertyOfferType.js";
 import propertyAmenityModel from "./PropertyAmenity.js";
 import propertyImageModel from "./PropertyImage.js";
 import clientSubscriptionModel from "./ClientSubscription.js";
 import agentSubscriptionModel from "./AgentSubscription.js";
 import propertyPublicationModel from "./PropertyPublication.js";
 import auditLogModel from "./AuditLog.js";
+import propertyResidentialDetailModel from "./PropertyResidentialDetail.js";
+import propertyLandDetailModel from "./PropertyLandDetail.js";
+import propertyOfficeDetailModel from "./PropertyOfficeDetail.js";
+import propertyWarehouseDetailModel from "./PropertyWarehouseDetail.js";
+import propertyBuildingDetailModel from "./PropertyBuildingDetail.js";
+import propertyCommercialDetailModel from "./PropertyCommercialDetail.js";
+import propertySchemaControlModel from "./PropertySchemaControl.js";
 import applyAssociations from "./associations.js";
 import addAuditHooks from "../helpers/auditHooks.js"; //Auditoría automática (INSERT/UPDATE/DELETE) sin tocar
 //controladores, usando AsyncLocalStorage. Incluye: - requestContext global - middleware Express -
@@ -44,13 +51,20 @@ const models = {
   City: cityModel(db),
   Property: propertyModel(db),
   PropertyType: propertyTypeModel(db),
-  PropertyStatus: propertyStatusModel(db),
+  PropertyOfferType: propertyOfferTypeModel(db),
   PropertyAmenity: propertyAmenityModel(db),
   PropertyImage: propertyImageModel(db),
   ClientSubscription: clientSubscriptionModel(db),
   AgentSubscription: agentSubscriptionModel(db),
   PropertyPublication: propertyPublicationModel(db),
   AuditLog: auditLogModel(db),
+  PropertyResidentialDetail: propertyResidentialDetailModel(db),
+  PropertyLandDetail: propertyLandDetailModel(db),
+  PropertyOfficeDetail: propertyOfficeDetailModel(db),
+  PropertyWarehouseDetail: propertyWarehouseDetailModel(db),
+  PropertyBuildingDetail: propertyBuildingDetailModel(db),
+  PropertyCommercialDetail: propertyCommercialDetailModel(db),
+  PropertySchemaControl: propertySchemaControlModel(db),
 };
 
 
@@ -79,13 +93,20 @@ export const {
   City,
   Property,
   PropertyType,
-  PropertyStatus,
+  PropertyOfferType,
   PropertyAmenity,
   PropertyImage,
   ClientSubscription,
   AgentSubscription,
   PropertyPublication,
   AuditLog,
+  PropertyResidentialDetail,
+  PropertyLandDetail,
+  PropertyOfficeDetail,
+  PropertyWarehouseDetail,
+  PropertyBuildingDetail,
+  PropertyCommercialDetail,
+  PropertySchemaControl,
 } = models;
 
 export { db };

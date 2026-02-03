@@ -20,6 +20,24 @@ export default (sequelize) => {
                 allowNull: false,
                 comment: 'ID del usuario que creó la propiedad'
             },
+            propertyTypeId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                comment: 'ID del tipo de propiedad (FK)',
+                references: {
+                    model: 'PropertyTypes',
+                    key: 'id'
+                }
+            },
+            offerTypeId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                comment: 'Tipo de oferta (FK)',
+                references: {
+                    model: 'PropertyOfferTypes',
+                    key: 'id'
+                }
+            },
             title: {
                 type: DataTypes.STRING(150),
                 allowNull: false,
@@ -38,32 +56,8 @@ export default (sequelize) => {
             currency: {
                 type: DataTypes.ENUM('USD', 'CRC'),
                 defaultValue: 'USD',
-                allowNull: false
-            },
-            bedrooms: {
-                type: DataTypes.INTEGER,
                 allowNull: false,
-                comment: 'Número de habitaciones'
-            },
-            bathrooms: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                comment: 'Número de baños completos'
-            },
-            parking: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                comment: 'Espacios de estacionamiento'
-            },
-            plotSize: {
-                type: DataTypes.FLOAT,
-                allowNull: false,
-                comment: 'Superficie total del terreno en m²'
-            },
-            constructionSize: {
-                type: DataTypes.FLOAT,
-                allowNull: false,
-                comment: 'Superficie construida en m²'
+                comment: 'Moneda del precio (USD o CRC)'
             },
             address: {
                 type: DataTypes.STRING(255),
@@ -88,7 +82,8 @@ export default (sequelize) => {
                     'ELIMINADA'
                 ),
                 defaultValue: 'BORRADOR',
-                allowNull: false
+                allowNull: false,
+                comment: 'Estado de la publicación (BORRADOR, ACTIVA, INACTIVA, ELIMINADA)'
             },
             viewsCount: {
                 type: DataTypes.INTEGER,

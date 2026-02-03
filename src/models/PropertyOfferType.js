@@ -2,20 +2,20 @@ import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
     /**
-     * Catálogo de Estatus de Propiedad.
-     * Ejemplos: Venta, Renta, Venta/Renta.
+     * Catálogo de Tipos de Oferta (antes PropertyStatus).
+     * Ejemplos: Venta, Alquiler, Venta/Alquiler.
      */
-    const PropertyStatus = sequelize.define(
-        'PropertyStatus',
+    const PropertyOfferType = sequelize.define(
+        'PropertyOfferType',
         {
             name: {
                 type: DataTypes.STRING(50),
                 allowNull: false,
-                comment: 'Estado de la oferta (ej. Venta, Alquiler)'
+                comment: 'Tipo de oferta (ej. Venta, Alquiler)'
             },
         },
         {
-            tableName: 'PropertyStatuses',
+            tableName: 'PropertyOfferTypes',
             freezeTableName: true,
             timestamps: false,
             indexes: [
@@ -27,5 +27,5 @@ export default (sequelize) => {
         }
     );
 
-    return PropertyStatus;
+    return PropertyOfferType;
 };

@@ -57,7 +57,7 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'PropertyPublications',
+            tableName: 'PropertyPublication',
             freezeTableName: true,
             timestamps: true,
         }

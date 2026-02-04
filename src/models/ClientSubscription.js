@@ -49,7 +49,7 @@ export default (sequelize) => {
             },
         },
         {
-            tableName: 'ClientSubscriptions',
+            tableName: 'ClientSubscription',
             freezeTableName: true,
             timestamps: true,
         }

@@ -21,7 +21,7 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'Amenities',
+            tableName: 'PropertyAmenity',
             freezeTableName: true,
             timestamps: false,
         }

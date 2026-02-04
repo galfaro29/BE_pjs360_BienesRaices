@@ -70,7 +70,7 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'AuditLogs',
+            tableName: 'AuditLog',
             freezeTableName: true,
             timestamps: true,
             updatedAt: false,

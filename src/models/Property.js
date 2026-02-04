@@ -25,7 +25,7 @@ export default (sequelize) => {
                 allowNull: false,
                 comment: 'ID del tipo de propiedad (FK)',
                 references: {
-                    model: 'PropertyTypes',
+                    model: 'PropertyType',
                     key: 'id'
                 }
             },
@@ -34,7 +34,7 @@ export default (sequelize) => {
                 allowNull: false,
                 comment: 'Tipo de oferta (FK)',
                 references: {
-                    model: 'PropertyOfferTypes',
+                    model: 'PropertyOfferType',
                     key: 'id'
                 }
             },
@@ -56,8 +56,7 @@ export default (sequelize) => {
             currency: {
                 type: DataTypes.ENUM('USD', 'CRC'),
                 defaultValue: 'USD',
-                allowNull: false,
-                comment: 'Moneda del precio (USD o CRC)'
+                allowNull: false
             },
             countryCode: {
                 type: DataTypes.STRING(5),
@@ -91,8 +90,7 @@ export default (sequelize) => {
                     'ELIMINADA'
                 ),
                 defaultValue: 'BORRADOR',
-                allowNull: false,
-                comment: 'Estado de la publicación (BORRADOR, ACTIVA, INACTIVA, ELIMINADA)'
+                allowNull: false
             },
             viewsCount: {
                 type: DataTypes.INTEGER,
@@ -101,7 +99,7 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'Properties',
+            tableName: 'Property',
             freezeTableName: true,
             timestamps: true
         }

@@ -28,7 +28,7 @@ export default (models) => {
     PropertyWarehouseDetail,
     PropertyBuildingDetail,
     PropertyCommercialDetail,
-    PropertySchemaControl,
+    PropertySchemaLink,
   } = models;
 
   /* ========================USER (Common)=============================*/
@@ -226,13 +226,13 @@ export default (models) => {
 
   // Property ↔ Amenities (N:M)
   Property.belongsToMany(PropertyAmenity, {
-    through: 'PropertyAmenities',
+    through: 'PropertyAmenityLink',
     foreignKey: 'propertyId',
     otherKey: 'amenityId',
-    as: 'amenities',
+    as: 'PropertyAmenity',
   });
   PropertyAmenity.belongsToMany(Property, {
-    through: 'PropertyAmenities',
+    through: 'PropertyAmenityLink',
     foreignKey: 'amenityId',
     otherKey: 'propertyId',
     as: 'properties',
@@ -254,12 +254,12 @@ export default (models) => {
   PropertyBuildingDetail.belongsTo(Property, { foreignKey: 'propertyId' });
 
   /* ================== CONTROL (CORRECTA) ========================= */
-  PropertyType.hasOne(PropertySchemaControl, {
+  PropertyType.hasOne(PropertySchemaLink, {
     foreignKey: 'propertyTypeId',
     as: 'schema',
   });
 
-  PropertySchemaControl.belongsTo(PropertyType, {
+  PropertySchemaLink.belongsTo(PropertyType, {
     foreignKey: 'propertyTypeId',
     as: 'propertyType',
   });

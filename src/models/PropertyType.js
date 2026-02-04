@@ -15,7 +15,7 @@ export default (sequelize) => {
             },
         },
         {
-            tableName: 'PropertyTypes',
+            tableName: 'PropertyType',
             freezeTableName: true,
             timestamps: false,
             indexes: [

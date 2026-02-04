@@ -19,7 +19,7 @@ module.exports = {
 
         // 2. Obtener todos los propertyTypes de la BD
         const propertyTypes = await queryInterface.sequelize.query(
-            `SELECT id, name FROM "PropertyTypes";`,
+            `SELECT id, name FROM "PropertyType";`,
             { type: queryInterface.sequelize.QueryTypes.SELECT }
         );
 
@@ -44,10 +44,10 @@ module.exports = {
 
         for (const item of dataToInsert) {
             await queryInterface.sequelize.query(
-                `INSERT INTO "PropertySchemaControls" ("propertyTypeId", "detailModel")
+                `INSERT INTO "PropertySchemaLink" ("propertyTypeId", "detailModel")
          SELECT :propertyTypeId, :detailModel
          WHERE NOT EXISTS (
-           SELECT 1 FROM "PropertySchemaControls" WHERE "propertyTypeId" = :propertyTypeId
+           SELECT 1 FROM "PropertySchemaLink" WHERE "propertyTypeId" = :propertyTypeId
          )`,
                 {
                     replacements: {
@@ -60,6 +60,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete('PropertySchemaControls', null, {});
+        await queryInterface.bulkDelete('PropertySchemaLink', null, {});
     }
 };

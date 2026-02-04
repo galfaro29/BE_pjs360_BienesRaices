@@ -18,10 +18,10 @@ module.exports = {
 
         for (const type of propertyTypes) {
             await queryInterface.sequelize.query(
-                `INSERT INTO "PropertyTypes" (name)
+                `INSERT INTO "PropertyType" (name)
          SELECT :name
          WHERE NOT EXISTS (
-           SELECT 1 FROM "PropertyTypes" WHERE name = :name
+           SELECT 1 FROM "PropertyType" WHERE name = :name
          )`,
                 { replacements: type }
             );
@@ -29,6 +29,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.bulkDelete('PropertyTypes', null, {});
+        await queryInterface.bulkDelete('PropertyType', null, {});
     }
 };

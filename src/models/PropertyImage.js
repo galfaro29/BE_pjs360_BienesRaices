@@ -36,7 +36,7 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'PropertyImages',
+            tableName: 'PropertyImage',
             freezeTableName: true,
             timestamps: true,
         }

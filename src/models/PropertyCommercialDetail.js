@@ -9,7 +9,7 @@ export default (sequelize) => {
                 primaryKey: true,
                 allowNull: false,
                 references: {
-                    model: 'Properties',
+                    model: 'Property',
                     key: 'id'
                 }
             },
@@ -45,7 +45,7 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'PropertyCommercialDetails',
+            tableName: 'PropertyCommercialDetail',
             freezeTableName: true,
             timestamps: false
         }

@@ -15,7 +15,7 @@ export default (sequelize) => {
             },
         },
         {
-            tableName: 'Cities',
+            tableName: 'City',
             freezeTableName: true,
             timestamps: false,
         }

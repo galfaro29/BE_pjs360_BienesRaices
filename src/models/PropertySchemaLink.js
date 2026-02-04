@@ -3,14 +3,14 @@ import { DataTypes } from 'sequelize';
 //✔ No depende de que exista una propiedad
 //✔ Vive a nivel tipo, no propiedad
 export default (sequelize) => {
-    const PropertySchemaControl = sequelize.define(
-        'PropertySchemaControl',
+    const PropertySchemaLink = sequelize.define(
+        'PropertySchemaLink',
         {
-            propertyTypeId: {   
+            propertyTypeId: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 references: {
-                    model: 'PropertyTypes',
+                    model: 'PropertyType',
                     key: 'id'
                 },
                 comment: 'Tipo de propiedad al que aplica este esquema'
@@ -22,10 +22,10 @@ export default (sequelize) => {
             }
         },
         {
-            tableName: 'PropertySchemaControls',
+            tableName: 'PropertySchemaLink',
             timestamps: false
         }
     );
 
-    return PropertySchemaControl;
+    return PropertySchemaLink;
 };

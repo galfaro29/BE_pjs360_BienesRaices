@@ -180,13 +180,15 @@ export default (models) => {
     as: 'properties',
   });
 
-  // Property → City (location)
-  Property.belongsTo(City, {
-    foreignKey: 'cityId',
-    as: 'city',
+  // Property → Country (location)
+  Property.belongsTo(Countries, {
+    foreignKey: 'countryCode',
+    targetKey: 'code',
+    as: 'country',
   });
-  City.hasMany(Property, {
-    foreignKey: 'cityId',
+  Countries.hasMany(Property, {
+    foreignKey: 'countryCode',
+    sourceKey: 'code',
     as: 'properties',
   });
 
@@ -200,15 +202,7 @@ export default (models) => {
     as: 'properties',
   });
 
-  // Property → Professional (Agent) (optional)
-  Property.belongsTo(Professional, {
-    foreignKey: { name: 'professionalId', allowNull: true },
-    as: 'agent',
-  });
-  Professional.hasMany(Property, {
-    foreignKey: 'professionalId',
-    as: 'assignedProperties',
-  });
+
 
   // Property → Images
   Property.hasMany(PropertyImage, {

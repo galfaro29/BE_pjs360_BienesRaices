@@ -1,7 +1,6 @@
-'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
-module.exports = {
+export default {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('AuditLogs', {
       id: {
@@ -64,10 +63,15 @@ module.exports = {
     });
 
     // Add indexes
-    await queryInterface.addIndex('AuditLogs', ['entityName']);
-    await queryInterface.addIndex('AuditLogs', ['entityId']);
-    await queryInterface.addIndex('AuditLogs', ['userId']);
-    await queryInterface.addIndex('AuditLogs', ['createdAt']);
+    // Add indexes (safely)
+    try {
+      await queryInterface.addIndex('AuditLogs', ['entityName']);
+      await queryInterface.addIndex('AuditLogs', ['entityId']);
+      await queryInterface.addIndex('AuditLogs', ['userId']);
+      await queryInterface.addIndex('AuditLogs', ['createdAt']);
+    } catch (error) {
+      console.log('Indexes on AuditLogs might already exist, skipping:', error.message);
+    }
   },
 
   async down(queryInterface, Sequelize) {

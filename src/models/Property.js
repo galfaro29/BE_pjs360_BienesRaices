@@ -59,6 +59,15 @@ export default (sequelize) => {
                 allowNull: false,
                 comment: 'Moneda del precio (USD o CRC)'
             },
+            countryCode: {
+                type: DataTypes.STRING(5),
+                allowNull: true,
+                comment: 'Código del país (FK)',
+                references: {
+                    model: 'Countries',
+                    key: 'code'
+                }
+            },
             address: {
                 type: DataTypes.STRING(255),
                 allowNull: true,

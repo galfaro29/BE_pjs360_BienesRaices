@@ -6,7 +6,7 @@ import path from "path";
 // **MODELO DE USUARIO**  
 import { Client, User } from '../models/index.js';
 import { requestContext } from '../helpers/requestContext.js';
-import { deleteOldProfileImage } from '../helpers/multer.js';
+import { deleteOldProfileImage } from '../middleware/uploads.js';
 
 // GET /client/dashboard
 const getClientDashboard = (req: any, res: any) => {
@@ -114,7 +114,11 @@ const updateClientProfile = async (req: any, res: any) => {
     // 🧼 Obtener perfil actual (si existe) para eliminar imagen anterior
     const existingProfile = await Client.findOne({ where: { userId } });
 
-    if (req.file && existingProfile?.profileImage && req.file.filename !== existingProfile.profileImage) {
+    if (
+      req.file &&
+      existingProfile?.profileImage &&
+      req.file.filename !== existingProfile.profileImage
+    ) {
       deleteOldProfileImage(existingProfile.profileImage);
     }
 

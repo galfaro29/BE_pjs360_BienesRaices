@@ -30,6 +30,7 @@ import propertyWarehouseDetailModel from "./PropertyWarehouseDetail.js";
 import propertyBuildingDetailModel from "./PropertyBuildingDetail.js";
 import propertyCommercialDetailModel from "./PropertyCommercialDetail.js";
 import propertySchemaLinkModel from "./PropertySchemaLink.js";
+import professionalTypeModel from "./ProfessionalType.js";
 import applyAssociations from "./associations.js";
 import addAuditHooks from "../helpers/auditHooks.js"; //Auditoría automática (INSERT/UPDATE/DELETE) sin tocar
 //controladores, usando AsyncLocalStorage. Incluye: - requestContext global - middleware Express -
@@ -65,6 +66,7 @@ const models = {
   PropertyBuildingDetail: propertyBuildingDetailModel(db),
   PropertyCommercialDetail: propertyCommercialDetailModel(db),
   PropertySchemaLink: propertySchemaLinkModel(db),
+  ProfessionalType: professionalTypeModel(db),
 };
 
 
@@ -107,6 +109,7 @@ export const {
   PropertyBuildingDetail,
   PropertyCommercialDetail,
   PropertySchemaLink,
+  ProfessionalType,
 } = models;
 
 export { db };

@@ -1,19 +1,22 @@
 import path from "path";
 import { createUploader, deleteFileIfExists } from "./uploadFactory.js";
+import { processProfileImage, optimizeImage } from "../helpers/imageProcessor.js";
 
 /* =========================
    🖼 PROFILE IMAGE
 ========================= */
 
 export const uploadProfileImage = createUploader({
-  folder: "profiles",
-  maxSizeMB: 0.5, // 512 KB
-  allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
-  filename: (req: any, file: Express.Multer.File) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const customId = req.user?.customId || "unknown";
-    return `profile-${customId}${ext}`;
-  },
+    folder: "profiles",
+    maxSizeMB: 0.5, // 512 KB
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+    shouldCompress: true,
+    processor: processProfileImage,
+    filename: (req: any, file: Express.Multer.File) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const customId = req.user?.customId || "unknown";
+        return `profile-${customId}${ext}`;
+    },
 });
 
 /* =========================
@@ -21,14 +24,14 @@ export const uploadProfileImage = createUploader({
 ========================= */
 
 export const uploadDocument = createUploader({
-  folder: "documents",
-  maxSizeMB: 5, // 5 MB
-  allowedMimeTypes: ["application/pdf", "image/jpeg", "image/png"],
-  filename: (req, file) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const customId = req.user?.customId || "unknown";
-    return `doc-${customId}-${Date.now()}${ext}`;
-  },
+    folder: "documents",
+    maxSizeMB: 5, // 5 MB
+    allowedMimeTypes: ["application/pdf", "image/jpeg", "image/png"],
+    filename: (req, file) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const customId = req.user?.customId || "unknown";
+        return `doc-${customId}-${Date.now()}${ext}`;
+    },
 });
 
 /* =========================
@@ -36,14 +39,16 @@ export const uploadDocument = createUploader({
 ========================= */
 
 export const uploadPropertyImage = createUploader({
-  folder: "properties",
-  maxSizeMB: 3, // 3 MB
-  allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
-  filename: (req, file) => {
-    const ext = path.extname(file.originalname).toLowerCase();
-    const customId = req.user?.customId || "unknown";
-    return `property-${customId}-${Date.now()}${ext}`;
-  },
+    folder: "properties",
+    maxSizeMB: 3, // 3 MB
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"],
+    shouldCompress: true,
+    processor: optimizeImage,
+    filename: (req, file) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const customId = req.user?.customId || "unknown";
+        return `property-${customId}-${Date.now()}${ext}`;
+    },
 });
 
 /* =========================
@@ -51,12 +56,12 @@ export const uploadPropertyImage = createUploader({
 ========================= */
 
 export const deleteOldProfileImage = (filename: string) => {
-  const fullPath = path.join(
-    process.cwd(),
-    "public",
-    "uploads",
-    "profiles",
-    filename
-  );
-  deleteFileIfExists(fullPath);
+    const fullPath = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        "profiles",
+        filename
+    );
+    deleteFileIfExists(fullPath);
 };

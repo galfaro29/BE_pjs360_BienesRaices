@@ -7,6 +7,7 @@ export default (sequelize) => {
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        comment: "ID del usuario destinatario de la notificación",
         references: {
           model: "User",
           key: "id",
@@ -14,17 +15,35 @@ export default (sequelize) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      message: { type: DataTypes.TEXT, allowNull: false },
-      type: { type: DataTypes.STRING },
-      readAt: { type: DataTypes.DATE },
+
+      message: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        comment: "Contenido del mensaje de la notificación",
+      },
+
+      type: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment:
+          "Tipo de notificación (ej. SYSTEM, INFO, WARNING, PROPERTY, PAYMENT)",
+      },
+
+      readAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment:
+          "Fecha y hora en que el usuario leyó la notificación. Null = no leída",
+      },
     },
     {
-      tableName: 'Notification', // 👈 nombre exacto de la tabla
-      freezeTableName: true,   // 👈 evita pluralizar
-      timestamps: false,         // 👈 no crea createdAt / updatedAt
+      tableName: 'Notification',
+      freezeTableName: true,     // evita pluralización automática
+      timestamps: false,         // no usa createdAt / updatedAt
+      comment:
+        "Notificaciones internas del sistema enviadas a los usuarios",
     }
   );
-
 
   return Notification;
 };

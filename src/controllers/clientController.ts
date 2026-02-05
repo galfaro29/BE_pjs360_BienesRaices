@@ -28,7 +28,7 @@ const getClientProfile = async (req: any, res: any) => {
 };
 
 // GET /client/profile/:id   -> :id = User.id
-const getClientProfileById = async (req: any, res: any) => {
+const getClientProfileByUserId = async (req: any, res: any) => {
   const { id } = req.params;
   const userId = Number(id);
 
@@ -167,6 +167,6 @@ const updateClientProfile = async (req: any, res: any) => {
 export {
   getClientDashboard,
   getClientProfile,
-  getClientProfileById,
+  getClientProfileByUserId,
   updateClientProfile,
 };

@@ -8,7 +8,7 @@ import {
   getClientDashboard,
   updateClientProfile,
   getClientProfile,
-  getClientProfileById
+  getClientProfileByUserId
 } from "../controllers/clientController.js";
 
 const router = express.Router();
@@ -62,7 +62,7 @@ router.get(
   "/profile/:id",
   authMiddleware,
   roleMiddleware("client"),
-  getClientProfileById
+  getClientProfileByUserId
 );
 
 

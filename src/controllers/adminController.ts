@@ -10,7 +10,7 @@ import { confirmEmailToken, resetPasswordToken } from "../helpers/email.js"; // 
  * getDashboardAdmin
  * — Devuelve datos mínimos del admin (req.user viene de authMiddleware)
  */
-const getDashboardAdmin = (req:any, res:any) => {
+const getAdminDashboard = (req: any, res: any) => {
   res.json({
     code: "SUCCESS_ADMIN_DASHBOARD",
     user: req.user,                                       // Información del admin autenticado
@@ -22,7 +22,7 @@ const getDashboardAdmin = (req:any, res:any) => {
  * — Crea el primer admin si no existe ninguno
  * — Genera token de confirmación y envía el email correspondiente
  */
-const createInitialAdmin = async (req:any, res:any) => {
+const createInitialAdminAccount = async (req: any, res: any) => {
   try {
     // Verificar si ya hay un admin existente
     const existing = await User.findOne({ where: { role: "admin" } });
@@ -66,7 +66,7 @@ const createInitialAdmin = async (req:any, res:any) => {
  * — Recupera todos los usuarios con rol 'professional'
  * — Excluye password gracias al scope 'eliminarPassword'
  */
-const getProfessionals = async (req:any, res:any) => {
+const listProfessionals = async (req: any, res: any) => {
   try {
     const professionals = await User.scope("eliminarPassword").findAll({
       where: { role: "professional" },
@@ -83,7 +83,7 @@ const getProfessionals = async (req:any, res:any) => {
  * — Activa un profesional (isActive = true) por su ID
  * — Solo afecta a usuarios con rol 'professional'
  */
-const activateProfessional = async (req:any, res:any) => {
+const activateProfessionalAccount = async (req: any, res: any) => {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id);
@@ -105,7 +105,7 @@ const activateProfessional = async (req:any, res:any) => {
  * deleteProfessional
  * — Elimina permanentemente un profesional de la base de datos
  */
-const deleteProfessional = async (req:any, res:any) => {
+const deleteProfessionalAccount = async (req: any, res: any) => {
   const { id } = req.params;
   try {
     const user = await User.findByPk(id);
@@ -122,10 +122,10 @@ const deleteProfessional = async (req:any, res:any) => {
 };
 
 export {
-  getDashboardAdmin,
-  createInitialAdmin,
-  getProfessionals,
-  activateProfessional,
-  deleteProfessional,
+  getAdminDashboard,
+  createInitialAdminAccount,
+  listProfessionals,
+  activateProfessionalAccount,
+  deleteProfessionalAccount,
 
 };

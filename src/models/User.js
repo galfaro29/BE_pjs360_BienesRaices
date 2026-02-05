@@ -7,49 +7,80 @@ export default (sequelize) => {
     {
       customId: {
         type: DataTypes.STRING(50),
-        allowNull: false, // obligatorio porque se asignará desde el controlador
-        comment: 'Código personalizado',
+        allowNull: false,
+        comment:
+          'Identificador personalizado del usuario (ej. CLI-0001, PRO-0005, ADM-0001)',
       },
+
       name: {
         type: DataTypes.STRING(200),
         allowNull: false,
+        comment: 'Nombre visible del usuario',
       },
+
       email: {
         type: DataTypes.STRING(200),
         allowNull: false,
         unique: true,
         validate: { isEmail: true },
+        comment: 'Correo electrónico del usuario (único en el sistema)',
       },
+
       password: {
         type: DataTypes.STRING(200),
         allowNull: false,
+        comment: 'Contraseña encriptada del usuario',
       },
-      token: DataTypes.STRING,
+
+      token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        comment:
+          'Token temporal para confirmación de cuenta o recuperación de contraseña',
+      },
+
       confirmado: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+        comment:
+          'Indica si el usuario ha confirmado su cuenta mediante email',
       },
+
       confirmedAt: {
         type: DataTypes.DATE,
         allowNull: true,
+        comment:
+          'Fecha y hora en que el usuario confirmó su cuenta',
       },
+
       role: {
         type: DataTypes.ENUM('admin', 'professional', 'client'),
         allowNull: false,
         defaultValue: 'client',
+        comment:
+          'Rol del usuario dentro del sistema (admin, professional, client)',
       },
+
       isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+        comment:
+          'Indica si la cuenta del usuario está activa para operar en el sistema',
       },
+
       locale: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'es',
+        comment:
+          'Idioma preferido del usuario para la interfaz y comunicaciones',
       },
+
       countryCode: {
         type: DataTypes.STRING(5),
-        allowNull: true, // Puede ser null al inicio hasta que completen perfil
+        allowNull: true,
+        comment:
+          'Código del país asociado al usuario (referencia a Countries.code)',
         references: {
           model: "Countries",
           key: "code",
@@ -59,9 +90,11 @@ export default (sequelize) => {
       },
     },
     {
-      tableName: 'User', // 👈 nombre exacto de la tabla
-      freezeTableName: true, // 👈 evita pluralizar
-      timestamps: true, // 👈 no crea createdAt / updatedAt
+      tableName: 'User',
+      freezeTableName: true, // evita pluralización automática
+      timestamps: true,      // incluye createdAt / updatedAt
+      comment:
+        'Entidad base de autenticación e identidad del sistema',
       hooks: {
         beforeCreate: async (user) => {
           const salt = await bcrypt.genSalt(10);
@@ -77,16 +110,23 @@ export default (sequelize) => {
       scopes: {
         eliminarPassword: {
           attributes: {
-            exclude: ['password', 'token', 'confirmado', 'createdAt', 'updatedAt'],
+            exclude: [
+              'password',
+              'token',
+              'confirmado',
+              'createdAt',
+              'updatedAt',
+            ],
           },
         },
       },
     }
   );
 
-
-
-  // Método de instancia para verificar contraseña
+  /**
+   * Método de instancia para verificar una contraseña
+   * comparándola con el hash almacenado.
+   */
   User.prototype.verificarPassword = function (password) {
     return bcrypt.compareSync(password, this.password);
   };

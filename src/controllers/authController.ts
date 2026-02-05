@@ -16,7 +16,7 @@ import type { SupportedLocale } from "../types/index.js";
  * register: crea un nuevo usuario (client o professional),
  * genera un token de confirmación y envía email.
  */
-const register = async (req: RegisterRequest, res: Response) => {
+const registerUser = async (req: RegisterRequest, res: Response) => {
   const {
     name,
     email,
@@ -175,7 +175,7 @@ const register = async (req: RegisterRequest, res: Response) => {
  * confirmAccount: confirma la cuenta de un usuario
  * usando el token enviado por email.
  */
-const confirmAccount = async (req: any, res: any) => {
+const confirmUserAccount = async (req: any, res: any) => {
   const { token } = req.params;
 
   try {
@@ -230,7 +230,7 @@ const confirmAccount = async (req: any, res: any) => {
  * login: autentica al usuario,
  * verifica estado y crea JWT enviado en cookie.
  */
-const login = async (req: any, res: any) => {
+const authenticateUser = async (req: any, res: any) => {
   const { email, password } = req.body;
 
   // Validar que existan credenciales
@@ -301,7 +301,7 @@ const login = async (req: any, res: any) => {
 /**
  * logout: elimina la cookie de sesión en el cliente.
  */
-const logout = (req: any, res: any) => {
+const logoutUser = (req: any, res: any) => {
   res.clearCookie(process.env.COOKIE_NAME, {
     httpOnly: true,
     secure: process.env.COOKIE_HTTPS === "true",
@@ -314,7 +314,7 @@ const logout = (req: any, res: any) => {
  * forgotPassword: genera un token de restablecimiento
  * y envía email con instrucciones.
  */
-const forgotPassword = async (req: any, res: any) => {
+const requestPasswordReset = async (req: any, res: any) => {
   const { email } = req.body;
 
   try {
@@ -353,7 +353,7 @@ const forgotPassword = async (req: any, res: any) => {
 /**
  * verifyToken: valida que el token de restablecimiento exista.
  */
-const verifyToken = async (req: any, res: any) => {
+const verifyPasswordResetToken = async (req: any, res: any) => {
   const { token } = req.params;
 
   try {
@@ -372,7 +372,7 @@ const verifyToken = async (req: any, res: any) => {
  * resetPassword: actualiza la contraseña de un usuario
  * usando el token de restablecimiento.
  */
-const resetPassword = async (req: any, res: any) => {
+const resetUserPassword = async (req: any, res: any) => {
   const { token } = req.params;
   const { password } = req.body;
 
@@ -397,7 +397,7 @@ const resetPassword = async (req: any, res: any) => {
 };
 
 
-const resetPasswordWithCustomId = async (req: any, res: any) => {
+const resetUserPasswordById = async (req: any, res: any) => {
   const { id } = req.params;
   const { password } = req.body;
 
@@ -425,7 +425,7 @@ const resetPasswordWithCustomId = async (req: any, res: any) => {
  * checkAuth: confirma que el JWT siga válido
  * y devuelve datos básicos del usuario.
  */
-const checkAuth = async (req: any, res: any) => {
+const checkAuthentication = async (req: any, res: any) => {
   try {
     // El usuario ya viene cargado desde loadUserMiddleware
     const user = req.dbUser;
@@ -452,13 +452,13 @@ const checkAuth = async (req: any, res: any) => {
 };
 
 export {
-  register,
-  confirmAccount,
-  login,
-  logout,
-  forgotPassword,
-  verifyToken,
-  resetPassword,
-  checkAuth,
-  resetPasswordWithCustomId,
+  registerUser,
+  confirmUserAccount,
+  authenticateUser,
+  logoutUser,
+  requestPasswordReset,
+  verifyPasswordResetToken,
+  resetUserPassword,
+  checkAuthentication,
+  resetUserPasswordById,
 };

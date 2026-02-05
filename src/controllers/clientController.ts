@@ -44,7 +44,7 @@ const getClientProfileById = async (req: any, res: any) => {
         {
           model: User,
           as: "user",
-          attributes: ["email"], // agrega más si lo requieres (email, customId, etc.)
+          attributes: ["email", "countryCode"], // agrega más si lo requieres (email, customId, etc.)
         },
       ],
       attributes: { exclude: ["createdAt", "updatedAt"] }, // opcional
@@ -67,7 +67,7 @@ const updateClientProfile = async (req: any, res: any) => {
     const customId = req.user.customId;
 
     //console.log(`👤 [updateClientProfile] START: userId=${userId}, customId=${customId}, storeFound=${!!requestContext.getStore()}`);
-
+    //console.log(req.body);
     const {
       // Identificación
       fullName,
@@ -120,6 +120,11 @@ const updateClientProfile = async (req: any, res: any) => {
       }
     }
 
+    // 📝 Actualizar countryCode en User si viene en el body
+    if (countryCode) {
+      await User.update({ countryCode }, { where: { id: userId } });
+    }
+
     // 📝 Crear o actualizar perfil (simple, solo lo que venga en el body)
     //console.log(`🚀 [updateClientProfile] PRE-UPSERT: storeFound=${!!requestContext.getStore()}`);
     await Client.upsert({
@@ -132,7 +137,7 @@ const updateClientProfile = async (req: any, res: any) => {
       altPhone,
       preferredContact,
       address,
-      countryCode: countryCode || existingProfile?.countryCode || 'CR',
+      // countryCode ya no va aquí, es de User
       administrativeAreaLevel1,
       administrativeAreaLevel2,
       city,

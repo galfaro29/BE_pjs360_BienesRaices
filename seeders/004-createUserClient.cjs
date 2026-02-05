@@ -20,7 +20,6 @@ module.exports = {
         role: 'client',
         isActive: true,
         locale: 'es',
-        countryCode: 'CR',
         createdAt: new Date('2025-08-27T15:20:47.952Z'),
         updatedAt: new Date('2025-08-27T15:21:02.878Z')
       }], {});

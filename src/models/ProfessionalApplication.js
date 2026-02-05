@@ -73,7 +73,7 @@ export default (sequelize) => {
           key: 'id',
         },
         comment:
-          'ID del usuario administrador que revisó la solicitud (FK a users.id, null al inicio)',
+          'ID del usuario administrador que revisó la solicitud (FK a User.id, null al inicio)',
       },
       rejectionReason: {
         type: DataTypes.TEXT,

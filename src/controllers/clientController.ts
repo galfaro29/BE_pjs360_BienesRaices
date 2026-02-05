@@ -6,6 +6,7 @@ import path from "path";
 // **MODELO DE USUARIO**  
 import { Client, User } from '../models/index.js';
 import { requestContext } from '../helpers/requestContext.js';
+import { deleteOldProfileImage } from '../helpers/multer.js';
 
 // GET /client/dashboard
 const getClientDashboard = (req: any, res: any) => {
@@ -113,11 +114,8 @@ const updateClientProfile = async (req: any, res: any) => {
     // 🧼 Obtener perfil actual (si existe) para eliminar imagen anterior
     const existingProfile = await Client.findOne({ where: { userId } });
 
-    if (req.file && existingProfile?.profileImage) {
-      const oldImagePath = path.join("public", "uploads", "perfil", existingProfile.profileImage);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
+    if (req.file && existingProfile?.profileImage && req.file.filename !== existingProfile.profileImage) {
+      deleteOldProfileImage(existingProfile.profileImage);
     }
 
     // 📝 Actualizar countryCode en User si viene en el body

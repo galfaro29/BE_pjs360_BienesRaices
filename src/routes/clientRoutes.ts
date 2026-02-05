@@ -1,7 +1,5 @@
 import express from "express";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import upload from "../helpers/multer.js";
 
 import { authMiddleware, roleMiddleware, ensureRequestContext } from "../middleware/index.js";
 import {
@@ -12,26 +10,6 @@ import {
 } from "../controllers/clientController.js";
 
 const router = express.Router();
-
-// 📁 Crear carpeta para imágenes si no existe
-const uploadDir = path.join("public", "uploads", "perfil");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// 📦 Configurar almacenamiento de multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const uniqueName = `perfil-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-    cb(null, uniqueName);
-  },
-});
-
-const upload = multer({ storage });
 
 // 🧠 Dashboard del cliente
 router.get(

@@ -27,7 +27,7 @@ export default (sequelize) => {
       displayName: {
         type: DataTypes.STRING(120),
         allowNull: false,
-        comment: 'Nombre público que se mostrará si la solicitud es aprobada',
+        comment: 'Nombre público/Username que se mostrará si la solicitud es aprobada',
       },
       phone: {
         type: DataTypes.STRING(30),

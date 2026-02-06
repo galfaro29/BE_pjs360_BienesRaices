@@ -6,6 +6,9 @@ import {
 import {
   getProfessionalDashboard,
   createProfessionalApplication,
+  getCountry,
+  getProfessionalTypes,
+  getCountryTypeProfessional
 } from '../controllers/professionalController.js';
 
 const router = express.Router();
@@ -21,6 +24,21 @@ router.get(
   roleMiddleware('professional'),
   getProfessionalDashboard
 );
+
+/**
+ * 🌍 Obtener países habilitados
+ */
+router.get('/countries', getCountry);
+
+/**
+ * 🛠 Obtener tipos de profesionales habilitados
+ */
+router.get('/professional-types', getProfessionalTypes);
+
+/**
+ * ⚙️ Endpoint combinado (países + tipos de profesionales)
+ */
+router.get('/config-data', getCountryTypeProfessional);
 
 /**
  * 📝 Crea una nueva solicitud profesional

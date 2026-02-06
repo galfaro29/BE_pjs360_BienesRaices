@@ -1,19 +1,20 @@
 // **MODELO DE USUARIO**  
-import { User,ProfessionalApplication } from '../models/index.js';  
-// El modelo Sequelize de usuarios permite extender lógica y futuras consultas si es necesario
+import { Request, Response } from 'express';
+import { User, ProfessionalApplication, ProfessionalType, Country } from '../models/index.js';
+import {
+  ProfessionalApplicationPayload,
+  CountryResponse,
+  ProfessionalTypeResponse
+} from '../types/professional/professional.types.js';
 
 /**
  * getProfessionalDashboard
  * — Controlador para GET /professional/dashboard
- * — Devuelve un JSON con:
- *    • code: 'SUCCESS_PROFESSIONAL_DASHBOARD'
- *    • user: datos del profesional autenticado (req.user inyectado por authMiddleware)
  */
-const getProfessionalDashboard = (req: any , res : any) => {
-  // Envía la respuesta con los datos del profesional
+const getProfessionalDashboard = (req: Request, res: Response) => {
   res.json({
     code: 'SUCCESS_PROFESSIONAL_DASHBOARD',
-    user: req.user
+    user: (req as any).user
   });
 };
 
@@ -22,25 +23,25 @@ const getProfessionalDashboard = (req: any , res : any) => {
  * — Controlador para POST /professional/applications
  * — Guarda los datos enviados por el formulario de aplicación profesional
  */
-const createProfessionalApplication = async (req: any , res: any) => {
-
+const createProfessionalApplication = async (req: Request<any, any, ProfessionalApplicationPayload>, res: Response) => {
   try {
-    // Desestructura datos del formulario
     const {
-      fullName,
+      professionalTypeId,
+      displayName,
       phone,
       email,
-      locale,
-      serviceCategoryId,
-      serviceId,
+      bio,
+      hasVehicle,
+      vehicleType,
+      canTravel,
       countryCode
-    } = req.body;
-    
+    }: ProfessionalApplicationPayload = req.body;
 
     // 🧩 Validaciones básicas
-    if (!fullName || !email || !phone || !serviceCategoryId || !countryCode || !serviceId || !locale ) {
+    if (!professionalTypeId || !displayName || !phone || !email || !countryCode) {
       return res.status(400).json({
-        code: 'ERR_PROFESSIONAL_APPLICATION_VALIDATION'
+        code: 'ERR_PROFESSIONAL_APPLICATION_VALIDATION',
+        message: 'Missing required fields'
       });
     }
 
@@ -56,18 +57,19 @@ const createProfessionalApplication = async (req: any , res: any) => {
     }
 
     // 📝 Crea la solicitud profesional
-    const newApplication = await ProfessionalApplication.create({
-      fullName,
+    await ProfessionalApplication.create({
+      professionalTypeId,
+      displayName,
       phone,
       email,
-      locale,
-      serviceCategoryId,
-      serviceId,
+      bio,
+      hasVehicle,
+      vehicleType,
+      canTravel,
       countryCode,
-      state: 'pending' // Pendiente de revisión
+      status: 'pending'
     });
 
-    // ✅ Respuesta exitosa
     return res.status(201).json({
       code: 'SUCCESS_PROFESSIONAL_APPLICATION'
     });
@@ -79,8 +81,80 @@ const createProfessionalApplication = async (req: any , res: any) => {
   }
 };
 
+/**
+ * getCountry
+ * - Retorna países habilitados (status = true)
+ */
+const getCountry = async (_req: Request, res: Response) => {
+  try {
+    const countries: CountryResponse[] = await Country.findAll({
+      where: { status: true },
+      attributes: ['code', 'name']
+    });
+
+    return res.json({
+      code: 'SUCCESS_GET_COUNTRIES',
+      countries
+    });
+  } catch (error) {
+    console.error('❌ Error al obtener países:', error);
+    return res.status(500).json({ code: 'ERROR_GET_COUNTRIES' });
+  }
+};
+
+/**
+ * getProfessionalTypes
+ * - Retorna tipos de profesionales habilitados (status = true)
+ */
+const getProfessionalTypes = async (_req: Request, res: Response) => {
+  try {
+    const types: ProfessionalTypeResponse[] = await ProfessionalType.findAll({
+      where: { status: true },
+      attributes: ['id', 'name', 'status']
+    });
+
+    return res.json({
+      code: 'SUCCESS_GET_PROFESSIONAL_TYPES',
+      professionalTypes: types
+    });
+  } catch (error) {
+    console.error('❌ Error al obtener tipos de profesionales:', error);
+    return res.status(500).json({ code: 'ERROR_GET_PROFESSIONAL_TYPES' });
+  }
+};
+
+/**
+ * getCountryTypeProfessional
+ * - Endpoint combinado para países y tipos de profesionales
+ */
+const getCountryTypeProfessional = async (_req: Request, res: Response) => {
+  try {
+    const [countries, professionalTypes] = await Promise.all([
+      Country.findAll({
+        where: { status: true },
+        attributes: ['code', 'name']
+      }),
+      ProfessionalType.findAll({
+        where: { status: true },
+        attributes: ['id', 'name', 'status']
+      })
+    ]);
+
+    return res.json({
+      code: 'SUCCESS_GET_CONFIG_DATA',
+      countries,
+      professionalTypes
+    });
+  } catch (error) {
+    console.error('❌ Error al obtener datos de configuración:', error);
+    return res.status(500).json({ code: 'ERROR_GET_CONFIG_DATA' });
+  }
+};
 
 export {
-  getProfessionalDashboard,  // Exporta la función para usarla en las rutas de profesionales
-  createProfessionalApplication, // Solicitud de información para registro de profesionales
+  getProfessionalDashboard,
+  createProfessionalApplication,
+  getCountry,
+  getProfessionalTypes,
+  getCountryTypeProfessional
 };

@@ -11,7 +11,7 @@ import depositModel from "./Deposit.js";
 import ratingModel from "./Rating.js";
 import notificationModel from "./Notification.js";
 import categoryModel from "./CategoriesClient.js";
-import countryModel from "./Countries.js";
+import countryModel from "./Country.js";
 import stateModel from "./State.js";
 import cityModel from "./City.js";
 import propertyModel from "./Property.js";
@@ -47,7 +47,7 @@ const models = {
   Rating: ratingModel(db),
   Notification: notificationModel(db),
   CategoriesClient: categoryModel(db),
-  Countries: countryModel(db),
+  Country: countryModel(db),
   State: stateModel(db),
   City: cityModel(db),
   Property: propertyModel(db),
@@ -90,7 +90,7 @@ export const {
   Rating,
   Notification,
   CategoriesClient,
-  Countries,
+  Country,
   State,
   City,
   Property,

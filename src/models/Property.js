@@ -63,7 +63,7 @@ export default (sequelize) => {
                 allowNull: true,
                 comment: 'Código del país (FK)',
                 references: {
-                    model: 'Countries',
+                    model: 'Country',
                     key: 'code'
                 }
             },

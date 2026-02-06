@@ -9,7 +9,7 @@ export default (models) => {
     Rating,
     Notification,
     CategoriesClient,
-    Countries,
+    Country,
     State,
     City,
     Property,
@@ -33,12 +33,12 @@ export default (models) => {
 
   /* ========================USER (Common)=============================*/
   // User → Country
-  User.belongsTo(Countries, {
+  User.belongsTo(Country, {
     foreignKey: { name: "countryCode", allowNull: true },
     targetKey: "code",
     as: "country",
   });
-  Countries.hasMany(User, {
+  Country.hasMany(User, {
     foreignKey: { name: "countryCode", allowNull: true },
     as: "users",
   });
@@ -127,12 +127,12 @@ export default (models) => {
 
   /* ==================PROFESSIONAL APPLICATION=========================*/
   // ProfessionalApplication → User
-  ProfessionalApplication.belongsTo(Countries, {
+  ProfessionalApplication.belongsTo(Country, {
     foreignKey: { name: "countryCode", allowNull: false },
     targetKey: "code",
     as: "country",
   });
-  Countries.hasMany(ProfessionalApplication, {
+  Country.hasMany(ProfessionalApplication, {
     foreignKey: { name: "countryCode", allowNull: false },
     as: "professionalApplications",
   });
@@ -151,8 +151,8 @@ export default (models) => {
 
   /* ================LOCATION============================================*/
   // Country → State
-  Countries.hasMany(State, { foreignKey: 'countryCode', sourceKey: 'code' });
-  State.belongsTo(Countries, { foreignKey: 'countryCode', targetKey: 'code' });
+  Country.hasMany(State, { foreignKey: 'countryCode', sourceKey: 'code' });
+  State.belongsTo(Country, { foreignKey: 'countryCode', targetKey: 'code' });
 
   // State → City
   State.hasMany(City, { foreignKey: 'stateId' });
@@ -181,12 +181,12 @@ export default (models) => {
   });
 
   // Property → Country (location)
-  Property.belongsTo(Countries, {
+  Property.belongsTo(Country, {
     foreignKey: 'countryCode',
     targetKey: 'code',
     as: 'country',
   });
-  Countries.hasMany(Property, {
+  Country.hasMany(Property, {
     foreignKey: 'countryCode',
     sourceKey: 'code',
     as: 'properties',

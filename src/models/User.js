@@ -72,9 +72,9 @@ export default (sequelize) => {
       countryCode: {
         type: DataTypes.STRING(5),
         allowNull: true,
-        comment: 'Código del país asociado al usuario (referencia a Countries.code)',
+        comment: 'Código del país asociado al usuario (referencia a Country.code)',
         references: {
-          model: "Countries",
+          model: "Country",
           key: "code",
         },
         onUpdate: "CASCADE",

@@ -3,7 +3,7 @@ import { DataTypes } from 'sequelize';
 export default (sequelize) => {
     /**
      * Modelo que representa un Estado, Departamento o Provincia.
-     * Se relaciona con Countries y contiene múltiples Cities.
+     * Se relaciona con Country y contiene múltiples Cities.
      */
     const State = sequelize.define(
         'State',

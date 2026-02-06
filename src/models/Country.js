@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const Countries = sequelize.define(
-    'Countries',
+  const Country = sequelize.define(
+    'Country',
     {
       code: {
         type: DataTypes.STRING(5),
@@ -20,7 +20,7 @@ export default (sequelize) => {
       },
     },
     {
-      tableName: 'Countries',   // nombre exacto en la base de datos
+      tableName: 'Country',   // nombre exacto en la base de datos
       freezeTableName: true,    // evita pluralización automática
       timestamps: false,        // no incluye createdAt / updatedAt
       comment:
@@ -28,5 +28,5 @@ export default (sequelize) => {
     }
   );
 
-  return Countries;
+  return Country;
 };

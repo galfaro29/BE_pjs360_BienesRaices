@@ -21,7 +21,6 @@ export default (sequelize) => {
       email: {
         type: DataTypes.STRING(200),
         allowNull: false,
-        unique: true,
         validate: { isEmail: true },
         comment: 'Correo electrónico del usuario (único en el sistema)',
       },
@@ -35,52 +34,45 @@ export default (sequelize) => {
       token: {
         type: DataTypes.STRING,
         allowNull: true,
-        comment:
-          'Token temporal para confirmación de cuenta o recuperación de contraseña',
+        comment: 'Token temporal para confirmación de cuenta o recuperación de contraseña',
       },
 
       confirmado: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-        comment:
-          'Indica si el usuario ha confirmado su cuenta mediante email',
+        comment: 'Indica si el usuario ha confirmado su cuenta mediante email',
       },
 
       confirmedAt: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment:
-          'Fecha y hora en que el usuario confirmó su cuenta',
+        comment: 'Fecha y hora en que el usuario confirmó su cuenta',
       },
 
       role: {
         type: DataTypes.ENUM('admin', 'professional', 'client'),
         allowNull: false,
         defaultValue: 'client',
-        comment:
-          'Rol del usuario dentro del sistema (admin, professional, client)',
+        //comment: 'Rol del usuario dentro del sistema (admin, professional, client)',
       },
 
       isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-        comment:
-          'Indica si la cuenta del usuario está activa para operar en el sistema',
+        comment: 'Indica si la cuenta del usuario está activa para operar en el sistema',
       },
 
       locale: {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'es',
-        comment:
-          'Idioma preferido del usuario para la interfaz y comunicaciones',
+        comment: 'Idioma preferido del usuario para la interfaz y comunicaciones',
       },
 
       countryCode: {
         type: DataTypes.STRING(5),
         allowNull: true,
-        comment:
-          'Código del país asociado al usuario (referencia a Countries.code)',
+        comment: 'Código del país asociado al usuario (referencia a Countries.code)',
         references: {
           model: "Countries",
           key: "code",
@@ -132,4 +124,4 @@ export default (sequelize) => {
   };
 
   return User;
-};
+}; 

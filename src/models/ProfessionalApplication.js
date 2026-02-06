@@ -22,7 +22,7 @@ export default (sequelize) => {
       status: {
         type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         defaultValue: 'pending',
-        comment: "Estado de la solicitud: 'pending', 'approved', 'rejected'",
+        //comment: "Estado de la solicitud: 'pending', 'approved', 'rejected'",
       },
       displayName: {
         type: DataTypes.STRING(120),
@@ -38,32 +38,27 @@ export default (sequelize) => {
         type: DataTypes.STRING(120),
         allowNull: false,
         validate: { isEmail: true },
-        comment:
-          'Correo electrónico visible para clientes (puede ser distinto al email de login)',
+        comment:'Correo electrónico visible para clientes (puede ser distinto al email de login)',
       },
       bio: {
         type: DataTypes.TEXT,
         allowNull: true,
-        comment:
-          'Descripción breve del profesional, experiencia o presentación pública',
+        comment: 'Descripción breve del profesional, experiencia o presentación pública',
       },
       hasVehicle: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-        comment:
-          'Indica si el profesional cuenta con vehículo propio (true / false)',
+        comment: 'Indica si el profesional cuenta con vehículo propio (true / false)',
       },
       vehicleType: {
         type: DataTypes.ENUM('car', 'motorcycle', 'none'),
         defaultValue: 'none',
-        comment:
-          "Tipo de vehículo del profesional ('car', 'motorcycle', 'none')",
+        //comment: "Tipo de vehículo del profesional ('car', 'motorcycle', 'none')",
       },
       canTravel: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
-        comment:
-          'Indica si el profesional está dispuesto a desplazarse para atender clientes',
+        comment: 'Indica si el profesional está dispuesto a desplazarse para atender clientes',
       },
       reviewedBy: {
         type: DataTypes.INTEGER,
@@ -72,14 +67,12 @@ export default (sequelize) => {
           model: 'User',
           key: 'id',
         },
-        comment:
-          'ID del usuario administrador que revisó la solicitud (FK a User.id, null al inicio)',
+        comment: 'ID del usuario administrador que revisó la solicitud (FK a User.id, null al inicio)',
       },
       rejectionReason: {
         type: DataTypes.TEXT,
         allowNull: true,
-        comment:
-          'Motivo del rechazo en caso de que la solicitud sea rechazada',
+        comment: 'Motivo del rechazo en caso de que la solicitud sea rechazada',
       },
       created_at: {
         type: DataTypes.DATE,
@@ -91,8 +84,7 @@ export default (sequelize) => {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
-        comment:
-          'Fecha y hora de la última actualización del registro (normalmente al revisar)',
+        comment: 'Fecha y hora de la última actualización del registro (normalmente al revisar)',
       },
     },
     {

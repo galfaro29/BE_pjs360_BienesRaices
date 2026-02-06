@@ -33,7 +33,7 @@ export default (sequelize) => {
         type: DataTypes.ENUM("ID", "PASSPORT"),
         allowNull: false,
         defaultValue: "ID",
-        comment: "Tipo de documento de identificación",
+        //comment: "Tipo de documento de identificación",
       },
       documentNumber: {
         type: DataTypes.STRING(50),
@@ -58,14 +58,13 @@ export default (sequelize) => {
         type: DataTypes.ENUM("WHATSAPP", "EMAIL", "TELEGRAM"),
         allowNull: false,
         defaultValue: "WHATSAPP",
-        comment: "Canal de comunicación preferido por el cliente",
+       // comment: "Canal de comunicación preferido por el cliente",
       },
       marketingOptIn: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
-        comment:
-          "Indica si el cliente autorizó recibir comunicaciones de marketing y promociones",
+        comment: "Indica si el cliente autorizó recibir comunicaciones de marketing y promociones",
       },
 
       // === Clasificación ===

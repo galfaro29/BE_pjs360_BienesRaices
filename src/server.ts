@@ -72,6 +72,7 @@ try {
   await db.authenticate(); // Verificar credenciales de conexión
 
   const syncMode = process.env.DB_SYNC_MODE;
+  //console.log('🔍 DEBUG: DB_SYNC_MODE is:', syncMode);
 
   if (syncMode === 'force') {
     // ⚠️ Borra y recrea tablas (peligroso para producción)

@@ -98,7 +98,7 @@ export default (sequelize) => {
       vehicleType: {
         type: DataTypes.ENUM('car', 'motorcycle', 'bike', 'other'),
         allowNull: true,
-        comment: "Tipo de vehículo del profesional, si aplica",
+        //comment: "Tipo de vehículo del profesional, si aplica",
       },
       canTravel: {
         type: DataTypes.BOOLEAN,

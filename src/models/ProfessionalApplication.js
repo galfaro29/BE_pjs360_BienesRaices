@@ -38,7 +38,7 @@ export default (sequelize) => {
         type: DataTypes.STRING(120),
         allowNull: false,
         validate: { isEmail: true },
-        comment:'Correo electrónico visible para clientes (puede ser distinto al email de login)',
+        comment: 'Correo electrónico visible para clientes (puede ser distinto al email de login)',
       },
       bio: {
         type: DataTypes.TEXT,
@@ -60,14 +60,14 @@ export default (sequelize) => {
         defaultValue: false,
         comment: 'Indica si el profesional está dispuesto a desplazarse para atender clientes',
       },
-      reviewedBy: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
+      countryCode: {
+        type: DataTypes.STRING(5),
+        allowNull: false,
+        comment: 'Código del país donde el profesional desea trabajar (FK a Country.code)',
         references: {
-          model: 'User',
-          key: 'id',
+          model: 'Country',
+          key: 'code',
         },
-        comment: 'ID del usuario administrador que revisó la solicitud (FK a User.id, null al inicio)',
       },
       rejectionReason: {
         type: DataTypes.TEXT,

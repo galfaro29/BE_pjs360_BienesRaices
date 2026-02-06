@@ -29,6 +29,7 @@ export default (models) => {
     PropertyBuildingDetail,
     PropertyCommercialDetail,
     PropertySchemaLink,
+    ProfessionalType,
   } = models;
 
   /* ========================USER (Common)=============================*/
@@ -126,7 +127,7 @@ export default (models) => {
   });
 
   /* ==================PROFESSIONAL APPLICATION=========================*/
-  // ProfessionalApplication → User
+  // ProfessionalApplication → Country
   ProfessionalApplication.belongsTo(Country, {
     foreignKey: { name: "countryCode", allowNull: false },
     targetKey: "code",
@@ -135,6 +136,16 @@ export default (models) => {
   Country.hasMany(ProfessionalApplication, {
     foreignKey: { name: "countryCode", allowNull: false },
     as: "professionalApplications",
+  });
+
+  // ProfessionalApplication → ProfessionalType
+  ProfessionalApplication.belongsTo(ProfessionalType, {
+    foreignKey: { name: "professionalTypeId", allowNull: false },
+    as: "professionalType",
+  });
+  ProfessionalType.hasMany(ProfessionalApplication, {
+    foreignKey: { name: "professionalTypeId", allowNull: false },
+    as: "applications",
   });
 
 

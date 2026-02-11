@@ -10,19 +10,18 @@ export default (sequelize) => {
         autoIncrement: true,
         comment: 'Identificador único de la solicitud de profesional (PK)',
       },
-      professionalTypeId: {
+      countryProfessionalTypeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: 'Tipo de profesional solicitado (FK a ProfessionalType.id)',
+        comment: 'Relación con la configuración de tipo profesional por país (FK a CountryProfessionalType.id)',
         references: {
-          model: 'ProfessionalType',
+          model: 'CountryProfessionalType',
           key: 'id',
         },
       },
       status: {
         type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         defaultValue: 'pending',
-        //comment: "Estado de la solicitud: 'pending', 'approved', 'rejected'",
       },
       displayName: {
         type: DataTypes.STRING(120),
@@ -53,21 +52,11 @@ export default (sequelize) => {
       vehicleType: {
         type: DataTypes.ENUM('car', 'motorcycle', 'none'),
         defaultValue: 'none',
-        //comment: "Tipo de vehículo del profesional ('car', 'motorcycle', 'none')",
       },
       canTravel: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         comment: 'Indica si el profesional está dispuesto a desplazarse para atender clientes',
-      },
-      countryCode: {
-        type: DataTypes.STRING(5),
-        allowNull: false,
-        comment: 'Código del país donde el profesional desea trabajar (FK a Country.code)',
-        references: {
-          model: 'Country',
-          key: 'code',
-        },
       },
       rejectionReason: {
         type: DataTypes.TEXT,

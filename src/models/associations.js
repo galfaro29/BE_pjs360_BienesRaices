@@ -30,6 +30,7 @@ export default (models) => {
     PropertyCommercialDetail,
     PropertySchemaLink,
     ProfessionalType,
+    CountryProfessionalType,
   } = models;
 
   /* ========================USER (Common)=============================*/
@@ -127,25 +128,48 @@ export default (models) => {
   });
 
   /* ==================PROFESSIONAL APPLICATION=========================*/
-  // ProfessionalApplication → Country
-  ProfessionalApplication.belongsTo(Country, {
-    foreignKey: { name: "countryCode", allowNull: false },
+  // ProfessionalApplication → CountryProfessionalType
+  ProfessionalApplication.belongsTo(CountryProfessionalType, {
+    foreignKey: { name: "countryProfessionalTypeId", allowNull: false },
+    as: "countryConfig",
+  });
+  CountryProfessionalType.hasMany(ProfessionalApplication, {
+    foreignKey: { name: "countryProfessionalTypeId", allowNull: false },
+    as: "applications",
+  });
+
+  // Country <-> ProfessionalType (N:M via CountryProfessionalType)
+  Country.hasMany(CountryProfessionalType, {
+    foreignKey: "countryCode",
+    sourceKey: "code",
+    as: "professionalTypeConfigs",
+  });
+  CountryProfessionalType.belongsTo(Country, {
+    foreignKey: "countryCode",
     targetKey: "code",
     as: "country",
   });
-  Country.hasMany(ProfessionalApplication, {
-    foreignKey: { name: "countryCode", allowNull: false },
-    as: "professionalApplications",
-  });
 
-  // ProfessionalApplication → ProfessionalType
-  ProfessionalApplication.belongsTo(ProfessionalType, {
-    foreignKey: { name: "professionalTypeId", allowNull: false },
+  ProfessionalType.hasMany(CountryProfessionalType, {
+    foreignKey: "professionalTypeId",
+    as: "countryConfigs",
+  });
+  CountryProfessionalType.belongsTo(ProfessionalType, {
+    foreignKey: "professionalTypeId",
     as: "professionalType",
   });
-  ProfessionalType.hasMany(ProfessionalApplication, {
-    foreignKey: { name: "professionalTypeId", allowNull: false },
-    as: "applications",
+
+  ProfessionalType.belongsToMany(Country, {
+    through: CountryProfessionalType,
+    foreignKey: "professionalTypeId",
+    otherKey: "countryCode",
+    as: "countries",
+  });
+  Country.belongsToMany(ProfessionalType, {
+    through: CountryProfessionalType,
+    foreignKey: "countryCode",
+    otherKey: "professionalTypeId",
+    as: "professionalTypes",
   });
 
 

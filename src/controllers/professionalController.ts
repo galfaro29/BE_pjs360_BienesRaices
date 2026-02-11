@@ -1,6 +1,6 @@
 // **MODELO DE USUARIO**  
 import { Request, Response } from 'express';
-import { User, ProfessionalApplication, ProfessionalType, Country } from '../models/index.js';
+import { User, ProfessionalApplication, ProfessionalType, Country, CountryProfessionalType } from '../models/index.js';
 import {
   ProfessionalApplicationPayload,
   CountryResponse,
@@ -56,9 +56,41 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       });
     }
 
+    // 🌍 Validar configuración por país (CountryProfessionalType)
+    const countryConfig = await CountryProfessionalType.findOne({
+      where: {
+        countryCode,
+        professionalTypeId,
+        isEnabled: true,
+        allowRegister: true
+      },
+      include: [
+        {
+          model: ProfessionalType,
+          as: 'professionalType',
+          where: { status: true } // Activo globalmente
+        },
+        {
+          model: Country,
+          as: 'country',
+          where: {
+            status: true,        // País activo
+            allowRegister: true  // País permite registros
+          }
+        }
+      ]
+    });
+
+    if (!countryConfig) {
+      return res.status(403).json({
+        code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
+        message: 'This professional type is not enabled, does not allow registration, or the country is not active for new registrations.'
+      });
+    }
+
     // 📝 Crea la solicitud profesional
     await ProfessionalApplication.create({
-      professionalTypeId,
+      countryProfessionalTypeId: countryConfig.id,
       displayName,
       phone,
       email,
@@ -66,7 +98,6 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       hasVehicle,
       vehicleType,
       canTravel,
-      countryCode,
       status: 'pending'
     });
 
@@ -106,12 +137,35 @@ const getCountry = async (_req: Request, res: Response) => {
  * getProfessionalTypes
  * - Retorna tipos de profesionales habilitados (status = true)
  */
-const getProfessionalTypes = async (_req: Request, res: Response) => {
+const getProfessionalTypes = async (req: Request, res: Response) => {
   try {
-    const types: ProfessionalTypeResponse[] = await ProfessionalType.findAll({
-      where: { status: true },
-      attributes: ['id', 'name', 'status']
-    });
+    const { countryCode } = req.query;
+
+    let types;
+    if (countryCode) {
+      // Si hay país, filtramos por la configuración de ese país
+      types = await ProfessionalType.findAll({
+        where: { status: true },
+        include: [
+          {
+            model: CountryProfessionalType,
+            as: 'countryConfigs',
+            where: {
+              countryCode: countryCode as string,
+              isEnabled: true
+            },
+            attributes: ['allowRegister', 'allowBusiness']
+          }
+        ],
+        attributes: ['id', 'name', 'status']
+      });
+    } else {
+      // Si no hay país, retornamos los globales activos
+      types = await ProfessionalType.findAll({
+        where: { status: true },
+        attributes: ['id', 'name', 'status']
+      });
+    }
 
     return res.json({
       code: 'SUCCESS_GET_PROFESSIONAL_TYPES',
@@ -127,15 +181,29 @@ const getProfessionalTypes = async (_req: Request, res: Response) => {
  * getCountryTypeProfessional
  * - Endpoint combinado para países y tipos de profesionales
  */
-const getCountryTypeProfessional = async (_req: Request, res: Response) => {
+const getCountryTypeProfessional = async (req: Request, res: Response) => {
   try {
+    const { countryCode } = req.query;
+
     const [countries, professionalTypes] = await Promise.all([
       Country.findAll({
         where: { status: true },
         attributes: ['code', 'name']
       }),
+      // Si se pasa countryCode, filtramos por ese país, sino traemos todos los activos
       ProfessionalType.findAll({
         where: { status: true },
+        ...(countryCode ? {
+          include: [{
+            model: CountryProfessionalType,
+            as: 'countryConfigs',
+            where: {
+              countryCode: countryCode as string,
+              isEnabled: true
+            },
+            attributes: ['allowRegister', 'allowBusiness']
+          }]
+        } : {}),
         attributes: ['id', 'name', 'status']
       })
     ]);

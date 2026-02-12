@@ -45,17 +45,6 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       });
     }
 
-    // 📧 Verifica si ya existe una solicitud con ese correo
-    const existing = await ProfessionalApplication.findOne({
-      where: { email },
-    });
-
-    if (existing) {
-      return res.status(409).json({
-        code: 'ERR_PROFESSIONAL_APPLICATION_EXISTS'
-      });
-    }
-
     // 🌍 Validar configuración por país (CountryProfessionalType)
     const countryConfig = await CountryProfessionalType.findOne({
       where: {
@@ -68,14 +57,14 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
         {
           model: ProfessionalType,
           as: 'professionalType',
-          where: { status: true } // Activo globalmente
+          where: { status: true }
         },
         {
           model: Country,
           as: 'country',
           where: {
-            status: true,        // País activo
-            allowRegister: true  // País permite registros
+            status: true,
+            allowRegister: true
           }
         }
       ]
@@ -84,7 +73,35 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
     if (!countryConfig) {
       return res.status(403).json({
         code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
-        message: 'This professional type is not enabled, does not allow registration, or the country is not active for new registrations.'
+        message: 'This professional type is not enabled or the country is not active.'
+      });
+    }
+
+    // 🔍 Validación de solicitudes previas (Email + Configuración de País/Profesión)
+    const previousApplications = await ProfessionalApplication.findAll({
+      where: {
+        email,
+        countryProfessionalTypeId: countryConfig.id
+      }
+    });
+
+    // 1️⃣ Bloquear si ya hay una solicitud activa (pendiente o aprobada)
+    const activeApp = previousApplications.find((app: any) => ['pending', 'approved'].includes(app.status));
+    if (activeApp) {
+      return res.status(409).json({
+        code: activeApp.status === 'pending' ? 'ERR_PROFESSIONAL_APPLICATION_PENDING' : 'ERR_PROFESSIONAL_ALREADY_APPROVED',
+        message: activeApp.status === 'pending'
+          ? 'You already have a pending application for this category.'
+          : 'You are already an approved professional in this category.'
+      });
+    }
+
+    // 2️⃣ Anti-Spam: Bloquear si ha sido rechazado 3 veces o más
+    const rejectedCount = previousApplications.filter((app: any) => app.status === 'rejected').length;
+    if (rejectedCount >= 3) {
+      return res.status(429).json({
+        code: 'ERR_PROFESSIONAL_APPLICATION_SPAM_LIMIT',
+        message: 'Maximum number of attempts reached for this category. Please contact support.'
       });
     }
 
@@ -145,7 +162,7 @@ const getProfessionalTypes = async (req: Request, res: Response) => {
     if (countryCode) {
       // Si hay país, filtramos por la configuración de ese país
       types = await ProfessionalType.findAll({
-        where: { status: true },
+        // where: { status: true }, // Respetamos lo habilitado por país
         include: [
           {
             model: CountryProfessionalType,
@@ -160,7 +177,7 @@ const getProfessionalTypes = async (req: Request, res: Response) => {
         attributes: ['id', 'name', 'status']
       });
     } else {
-      // Si no hay país, retornamos los globales activos
+      // Si no hay país, retornamos los que tengan status true
       types = await ProfessionalType.findAll({
         where: { status: true },
         attributes: ['id', 'name', 'status']
@@ -191,7 +208,10 @@ const getCountryTypeProfessional = async (req: Request, res: Response) => {
           model: CountryProfessionalType,
           as: 'professionalTypeConfigs',
           required: true, // 🔥 solo países con tipos habilitados
-          where: { isEnabled: true },
+          where: {
+            isEnabled: true,
+            allowBusiness: true
+          },
           include: [
             {
               model: ProfessionalType,

@@ -20,56 +20,56 @@ module.exports = {
             {
                 id: 3,
                 name: 'Valuador',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 4,
                 name: 'Arquitecto',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 5,
                 name: 'Constructor / Contratista',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 6,
                 name: 'Inspector de Propiedades',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 7,
                 name: 'Administrador de Propiedades',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 8,
                 name: 'Fotógrafo Inmobiliario',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 9,
                 name: 'Asesor Hipotecario',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 10,
                 name: 'Servicios Complementarios',
-                status: false,
+                status: true,
                 created_at: new Date(),
                 updated_at: new Date()
             },

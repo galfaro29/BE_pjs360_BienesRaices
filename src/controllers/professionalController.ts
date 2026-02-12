@@ -183,39 +183,45 @@ const getProfessionalTypes = async (req: Request, res: Response) => {
  */
 const getCountryTypeProfessional = async (req: Request, res: Response) => {
   try {
-    const { countryCode } = req.query;
+    const countries = await Country.findAll({
+      where: { status: true },
+      attributes: ['code', 'name'],
+      include: [
+        {
+          model: CountryProfessionalType,
+          as: 'professionalTypeConfigs',
+          required: true, // 🔥 solo países con tipos habilitados
+          where: { isEnabled: true },
+          include: [
+            {
+              model: ProfessionalType,
+              as: 'professionalType',
+              where: { status: true },
+              attributes: ['id', 'name']
+            }
+          ]
+        }
+      ]
+    });
 
-    const [countries, professionalTypes] = await Promise.all([
-      Country.findAll({
-        where: { status: true },
-        attributes: ['code', 'name']
-      }),
-      // Si se pasa countryCode, filtramos por ese país, sino traemos todos los activos
-      ProfessionalType.findAll({
-        where: { status: true },
-        ...(countryCode ? {
-          include: [{
-            model: CountryProfessionalType,
-            as: 'countryConfigs',
-            where: {
-              countryCode: countryCode as string,
-              isEnabled: true
-            },
-            attributes: ['allowRegister', 'allowBusiness']
-          }]
-        } : {}),
-        attributes: ['id', 'name', 'status']
-      })
-    ]);
+    // 🔥 Transformación limpia para frontend
+    const result = countries.map((country: any) => ({
+      code: country.code,
+      name: country.name,
+      professionalTypes: country.professionalTypeConfigs.map((cpt: any) => ({
+        id: cpt.professionalType.id,
+        name: cpt.professionalType.name
+      }))
+    }));
 
     return res.json({
-      code: 'SUCCESS_GET_CONFIG_DATA',
-      countries,
-      professionalTypes
+      code: 'SUCCESS_GET_COUNTRY_PROFESSIONAL',
+      data: result
     });
+
   } catch (error) {
-    console.error('❌ Error al obtener datos de configuración:', error);
-    return res.status(500).json({ code: 'ERROR_GET_CONFIG_DATA' });
+    console.error('❌ Error al obtener datos:', error);
+    return res.status(500).json({ code: 'ERROR_GET_COUNTRY_PROFESSIONAL' });
   }
 };
 

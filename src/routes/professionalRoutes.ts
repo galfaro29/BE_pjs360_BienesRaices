@@ -38,7 +38,7 @@ router.get('/professional-types', getProfessionalTypes);
 /**
  * ⚙️ Endpoint combinado (países + tipos de profesionales)
  */
-router.get('/config-data', getCountryTypeProfessional);
+router.get('/country-professional', getCountryTypeProfessional);
 
 /**
  * 📝 Crea una nueva solicitud profesional

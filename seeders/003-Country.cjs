@@ -4,8 +4,8 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     const countries = [
       { code: 'CR', name: 'Costa Rica', currency: 'CRC', currencySymbol: '₡', status: true, allowRegister: true, allowBusiness: true },
-      { code: 'US', name: 'United States', currency: 'USD', currencySymbol: '$', status: false, allowRegister: true, allowBusiness: false },
-      { code: 'MX', name: 'Mexico', currency: 'MXN', currencySymbol: '$', status: false, allowRegister: true, allowBusiness: false },
+      { code: 'US', name: 'United States', currency: 'USD', currencySymbol: '$', status: true, allowRegister: true, allowBusiness: false },
+      { code: 'MX', name: 'Mexico', currency: 'MXN', currencySymbol: '$', status: true, allowRegister: true, allowBusiness: false },
       { code: 'CO', name: 'Colombia', currency: 'COP', currencySymbol: '$', status: false, allowRegister: true, allowBusiness: false },
       { code: 'AR', name: 'Argentina', currency: 'ARS', currencySymbol: '$', status: false, allowRegister: true, allowBusiness: false },
       { code: 'PE', name: 'Peru', currency: 'PEN', currencySymbol: 'S/.', status: false, allowRegister: true, allowBusiness: false },

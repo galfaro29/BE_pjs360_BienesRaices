@@ -202,6 +202,8 @@ const getProfessionalTypes = async (req: Request, res: Response) => {
  */
 const getCountryTypeProfessional = async (req: Request, res: Response) => {
   try {
+
+    //Retorna países y tipos de profesionales habilitados
     const countries = await Country.findAll({
       where: { status: true },
       attributes: ['code', 'name'],
@@ -236,9 +238,21 @@ const getCountryTypeProfessional = async (req: Request, res: Response) => {
       }))
     }));
 
+    // 🆕 Obtener tipos profesionales con engagementModel = 'subscription'
+    const professionalTypesSubscription = await ProfessionalType.findAll({
+      where: {
+        status: true,
+        engagementModel: 'subscription'
+      },
+      attributes: ['id', 'name']
+    });
+
     return res.json({
       code: 'SUCCESS_GET_COUNTRY_PROFESSIONAL',
-      data: result
+      data: {
+        countryBased: result,
+        subscriptionBased: professionalTypesSubscription
+      }
     });
 
   } catch (error) {

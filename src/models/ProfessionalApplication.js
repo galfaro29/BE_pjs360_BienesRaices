@@ -12,12 +12,21 @@ export default (sequelize) => {
       },
       countryProfessionalTypeId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         comment: 'Relación con la configuración de tipo profesional por país (FK a CountryProfessionalType.id)',
         references: {
           model: 'CountryProfessionalType',
           key: 'id',
         },
+      },
+      professionalTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'ProfessionalType',
+          key: 'id',
+        },
+        comment: 'Representa el tipo profesional base cuando el modelo es subscription',
       },
       status: {
         type: DataTypes.ENUM('pending', 'approved', 'rejected'),
@@ -88,6 +97,19 @@ export default (sequelize) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      validate: {
+        checkConditionalFields() {
+          if (this.engagementModel === 'commission') {
+            if (this.countryProfessionalTypeId === null || this.countryProfessionalTypeId === undefined) {
+              throw new Error('countryProfessionalTypeId is required when engagementModel is commission');
+            }
+          } else if (this.engagementModel === 'subscription') {
+            if (this.professionalTypeId === null || this.professionalTypeId === undefined) {
+              throw new Error('professionalTypeId is required when engagementModel is subscription');
+            }
+          }
+        },
+      },
     }
   );
 

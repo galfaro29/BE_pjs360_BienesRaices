@@ -63,6 +63,12 @@ export default (sequelize) => {
         allowNull: true,
         comment: 'Motivo del rechazo en caso de que la solicitud sea rechazada',
       },
+      engagementModel: {
+        type: DataTypes.ENUM('commission', 'subscription'),
+        allowNull: false,
+        defaultValue: 'commission',
+        defaultValue: 'commission'
+      },
       created_at: {
         type: DataTypes.DATE,
         allowNull: false,

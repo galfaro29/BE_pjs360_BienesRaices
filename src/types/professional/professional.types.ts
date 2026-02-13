@@ -10,6 +10,7 @@ export interface ProfessionalApplicationPayload {
     hasVehicle: boolean;
     vehicleType: 'car' | 'motorcycle' | 'none';
     canTravel: boolean;
+    engagementModel: 'commission' | 'subscription';
     countryCode: string;
 }
 

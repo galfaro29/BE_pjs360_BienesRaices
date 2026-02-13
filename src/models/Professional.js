@@ -98,7 +98,12 @@ export default (sequelize) => {
       vehicleType: {
         type: DataTypes.ENUM('car', 'motorcycle', 'bike', 'other'),
         allowNull: true,
-        //comment: "Tipo de vehículo del profesional, si aplica",
+      },
+      engagementModel: {
+        type: DataTypes.ENUM('commission', 'subscription'),
+        allowNull: false,
+        defaultValue: 'commission',
+        defaultValue: 'commission'
       },
       canTravel: {
         type: DataTypes.BOOLEAN,

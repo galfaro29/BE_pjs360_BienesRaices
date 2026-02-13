@@ -34,11 +34,12 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       hasVehicle,
       vehicleType,
       canTravel,
+      engagementModel,
       countryCode
     }: ProfessionalApplicationPayload = req.body;
 
     // 🧩 Validaciones básicas
-    if (!professionalTypeId || !displayName || !phone || !email || !countryCode) {
+    if (!professionalTypeId || !displayName || !phone || !email || !countryCode || !engagementModel) {
       return res.status(400).json({
         code: 'ERR_PROFESSIONAL_APPLICATION_VALIDATION',
         message: 'Missing required fields'
@@ -115,6 +116,7 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       hasVehicle,
       vehicleType,
       canTravel,
+      engagementModel,
       status: 'pending'
     });
 

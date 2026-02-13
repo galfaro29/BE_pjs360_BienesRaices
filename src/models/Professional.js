@@ -102,8 +102,8 @@ export default (sequelize) => {
       engagementModel: {
         type: DataTypes.ENUM('commission', 'subscription'),
         allowNull: false,
-        defaultValue: 'commission',
-        defaultValue: 'commission'
+        defaultValue: 'subscription',
+        //comment: 'Modelo de contratación del profesional'
       },
       canTravel: {
         type: DataTypes.BOOLEAN,

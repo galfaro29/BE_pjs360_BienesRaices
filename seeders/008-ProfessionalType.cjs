@@ -5,71 +5,127 @@ module.exports = {
         await queryInterface.bulkInsert('ProfessionalType', [
             {
                 id: 1,
-                name: 'Agente Inmobiliario',
+                name: 'Agente inmobiliario',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 2,
-                name: 'Abogado Inmobiliario',
+                name: 'Abogado inmobiliario',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 3,
-                name: 'Valuador',
+                name: 'Notario',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 4,
-                name: 'Arquitecto',
+                name: 'Tasador / Valuador',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 5,
-                name: 'Constructor / Contratista',
+                name: 'Topógrafo',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 6,
-                name: 'Inspector de Propiedades',
+                name: 'Fotógrafo inmobiliario',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'seller',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 7,
-                name: 'Administrador de Propiedades',
+                name: 'Arquitecto',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 8,
-                name: 'Fotógrafo Inmobiliario',
+                name: 'Desarrollador / Constructora',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'seller',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 9,
-                name: 'Asesor Hipotecario',
+                name: 'Asesor hipotecario',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'buyer',
                 created_at: new Date(),
                 updated_at: new Date()
             },
             {
                 id: 10,
-                name: 'Servicios Complementarios',
+                name: 'Home staging / Interiorista',
                 status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'seller',
+                created_at: new Date(),
+                updated_at: new Date()
+            },
+            {
+                id: 11,
+                name: 'Empresa de mudanza',
+                status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
+                created_at: new Date(),
+                updated_at: new Date()
+            },
+            {
+                id: 12,
+                name: 'Limpieza / mantenimiento',
+                status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
+                created_at: new Date(),
+                updated_at: new Date()
+            },
+            {
+                id: 13,
+                name: 'Inspector técnico (inspección de vivienda)',
+                status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'buyer',
+                created_at: new Date(),
+                updated_at: new Date()
+            },
+            {
+                id: 14,
+                name: 'Seguros de hogar',
+                status: true,
+                engagementModel: 'subscription',
+                applicableTo: 'both',
                 created_at: new Date(),
                 updated_at: new Date()
             },

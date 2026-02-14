@@ -39,52 +39,81 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
     }: ProfessionalApplicationPayload = req.body;
 
     // 🧩 Validaciones básicas
-    if (!professionalTypeId || !displayName || !phone || !email || !countryCode || !engagementModel) {
+    const isCommission = engagementModel === 'commission';
+    if (!professionalTypeId || !displayName || !phone || !email || !engagementModel || (isCommission && !countryCode)) {
+      const missing = [];
+      if (!professionalTypeId) missing.push('professionalTypeId');
+      if (!displayName) missing.push('displayName');
+      if (!phone) missing.push('phone');
+      if (!email) missing.push('email');
+      if (!engagementModel) missing.push('engagementModel');
+      if (isCommission && !countryCode) missing.push('countryCode');
+
       return res.status(400).json({
         code: 'ERR_PROFESSIONAL_APPLICATION_VALIDATION',
-        message: 'Missing required fields'
+        message: `Missing required fields: ${missing.join(', ')}`
       });
     }
 
-    // 🌍 Validar configuración por país (CountryProfessionalType)
-    const countryConfig = await CountryProfessionalType.findOne({
-      where: {
-        countryCode,
-        professionalTypeId,
-        isEnabled: true,
-        allowRegister: true
-      },
-      include: [
-        {
-          model: ProfessionalType,
-          as: 'professionalType',
-          where: { status: true }
+    let countryProfessionalTypeId = null;
+
+    if (isCommission) {
+      // 🌍 Validar configuración por país (CountryProfessionalType)
+      const countryConfig = await CountryProfessionalType.findOne({
+        where: {
+          countryCode,
+          professionalTypeId,
+          isEnabled: true,
+          allowRegister: true
         },
-        {
-          model: Country,
-          as: 'country',
-          where: {
-            status: true,
-            allowRegister: true
+        include: [
+          {
+            model: ProfessionalType,
+            as: 'professionalType',
+            where: { status: true }
+          },
+          {
+            model: Country,
+            as: 'country',
+            where: {
+              status: true,
+              allowRegister: true
+            }
           }
-        }
-      ]
-    });
-
-    if (!countryConfig) {
-      return res.status(403).json({
-        code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
-        message: 'This professional type is not enabled or the country is not active.'
+        ]
       });
+
+      if (!countryConfig) {
+        return res.status(403).json({
+          code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
+          message: 'This professional type is not enabled or the country is not active.'
+        });
+      }
+      countryProfessionalTypeId = countryConfig.id;
+    } else {
+      // 🆕 Para suscripciones, validar que el tipo profesional exista y sea de tipo suscripción
+      const proType = await ProfessionalType.findOne({
+        where: { id: professionalTypeId, engagementModel: 'subscription', status: true }
+      });
+
+      if (!proType) {
+        return res.status(403).json({
+          code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
+          message: 'This professional type is not enabled for subscription.'
+        });
+      }
     }
 
-    // 🔍 Validación de solicitudes previas (Email + Configuración de País/Profesión)
-    const previousApplications = await ProfessionalApplication.findAll({
-      where: {
-        email,
-        countryProfessionalTypeId: countryConfig.id
-      }
-    });
+    // 🔍 Validación de solicitudes previas
+    const whereClause: any = { email };
+    if (isCommission) {
+      whereClause.countryProfessionalTypeId = countryProfessionalTypeId;
+    } else {
+      whereClause.professionalTypeId = professionalTypeId;
+      whereClause.engagementModel = 'subscription';
+    }
+
+    const previousApplications = await ProfessionalApplication.findAll({ where: whereClause });
 
     // 1️⃣ Bloquear si ya hay una solicitud activa (pendiente o aprobada)
     const activeApp = previousApplications.find((app: any) => ['pending', 'approved'].includes(app.status));
@@ -108,7 +137,8 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
 
     // 📝 Crea la solicitud profesional
     await ProfessionalApplication.create({
-      countryProfessionalTypeId: countryConfig.id,
+      countryProfessionalTypeId,
+      professionalTypeId: isCommission ? null : professionalTypeId,
       displayName,
       phone,
       email,

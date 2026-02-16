@@ -40,6 +40,7 @@ export default (models) => {
     targetKey: "code",
     as: "country",
   });
+  
   Country.hasMany(User, {
     foreignKey: { name: "countryCode", allowNull: true },
     as: "users",

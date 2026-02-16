@@ -191,9 +191,9 @@ const confirmUserAccount = async (req: any, res: any) => {
     user.confirmedAt = new Date();
 
     // Dependiendo del rol, activar inmediatamente o dejar pending approval
-    if (["admin", "client"].includes(user.role)) {
+    if (["admin", "client", "professional"].includes(user.role)) {
       user.isActive = true;
-    } else { // professional
+    } else { // manager
       user.isActive = false;
     }
 

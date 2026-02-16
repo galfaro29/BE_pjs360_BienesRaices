@@ -15,10 +15,16 @@ export default (sequelize) => {
                 primaryKey: true,
                 comment: 'Identificador único de la suscripción de cliente'
             },
-            userId: {
+            clientId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                comment: 'ID del usuario (cliente) dueño de la suscripción'
+                comment: 'ID del perfil cliente dueño de la suscripción',
+                references: {
+                    model: 'Client',
+                    key: 'userId',
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
             },
             planType: {
                 type: DataTypes.ENUM('PLUS', 'FREE'),

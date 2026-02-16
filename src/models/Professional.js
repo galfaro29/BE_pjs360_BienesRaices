@@ -4,12 +4,17 @@ export default (sequelize) => {
   const Professional = sequelize.define(
     'Professional',
     {
-      // === Identificador (FK a User) ===
-      userId: {
+      id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
+        unique: true,
+      },
+      userId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        comment: "ID del usuario base (User). Identifica de forma única al profesional",
+        unique: true,
+        comment: "ID del usuario base (User). Identifica al usuario dueño de este perfil",
         references: {
           model: "User",
           key: "id",
@@ -18,7 +23,43 @@ export default (sequelize) => {
         onDelete: "CASCADE",
       },
 
-      // === Información personal ===
+      // === Configuración del Profesional ===
+      engagementModel: {
+        type: DataTypes.ENUM('commission', 'subscription'),
+        allowNull: false,
+        defaultValue: 'subscription',
+        //comment: 'Modelo de contratación del profesional'
+      },
+      professionalTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'ProfessionalType',
+          key: 'id',
+        },
+      },
+      countryProfessionalTypeId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'CountryProfessionalType',
+          key: 'id',
+        },
+      },
+
+      // === Estado del Socio ===
+      status: {
+        type: DataTypes.ENUM(
+          'pending',
+          'active_basic',
+          'active_verified',
+          'rejected',
+          'suspended'
+        ),
+        defaultValue: 'pending',
+      },
+
+      // === Información personal y de contacto ===
       firstName: {
         type: DataTypes.STRING(100),
         allowNull: true,
@@ -39,12 +80,15 @@ export default (sequelize) => {
         allowNull: true,
         comment: "Segundo apellido del profesional (opcional)",
       },
-
-      // === Contacto ===
       phone: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.STRING(30),
         allowNull: true,
         comment: "Número de teléfono de contacto del profesional",
+      },
+      bio: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'Descripción breve del profesional, experiencia o presentación pública',
       },
 
       // === Ubicación ===
@@ -96,14 +140,8 @@ export default (sequelize) => {
         comment: "Indica si el profesional cuenta con vehículo propio",
       },
       vehicleType: {
-        type: DataTypes.ENUM('car', 'motorcycle', 'bike', 'other'),
-        allowNull: true,
-      },
-      engagementModel: {
-        type: DataTypes.ENUM('commission', 'subscription'),
-        allowNull: false,
-        defaultValue: 'subscription',
-        //comment: 'Modelo de contratación del profesional'
+        type: DataTypes.ENUM('car', 'motorcycle', 'bike', 'other', 'none'),
+        defaultValue: 'none',
       },
       canTravel: {
         type: DataTypes.BOOLEAN,
@@ -119,9 +157,9 @@ export default (sequelize) => {
     },
     {
       tableName: 'Professional',
-      freezeTableName: true,  // evita pluralización automática
+      freezeTableName: true,
       timestamps: true,
-      comment: "Perfil extendido del usuario con rol profesional",
+      comment: "Perfil extendido del usuario con rol profesional (Fuente de verdad)",
     }
   );
 

@@ -40,30 +40,10 @@ export default (models) => {
     targetKey: "code",
     as: "country",
   });
-  
+
   Country.hasMany(User, {
     foreignKey: { name: "countryCode", allowNull: true },
     as: "users",
-  });
-
-  // User → ClientSubscription
-  User.hasOne(ClientSubscription, {
-    foreignKey: { name: "userId", allowNull: false },
-    as: "clientSubscription",
-  });
-  ClientSubscription.belongsTo(User, {
-    foreignKey: { name: "userId", allowNull: false },
-    as: "user",
-  });
-
-  // User → AgentSubscription
-  User.hasOne(AgentSubscription, {
-    foreignKey: { name: "agentUserId", allowNull: false },
-    as: "agentSubscription",
-  });
-  AgentSubscription.belongsTo(User, {
-    foreignKey: { name: "agentUserId", allowNull: false },
-    as: "user",
   });
 
   /* ========================CLIENT====================================*/
@@ -74,6 +54,17 @@ export default (models) => {
   });
   User.hasOne(Client, {
     foreignKey: { name: "userId", allowNull: false },
+    as: "client",
+  });
+
+  // Client → ClientSubscription
+  Client.hasOne(ClientSubscription, {
+    foreignKey: "clientId",
+    as: "subscription",
+  });
+  ClientSubscription.belongsTo(Client, {
+    foreignKey: "clientId",
+    targetKey: "userId",
     as: "client",
   });
   // Client → Category
@@ -114,29 +105,64 @@ export default (models) => {
     as: "professional",
   });
 
+  // Professional → AgentSubscription
+  Professional.hasOne(AgentSubscription, {
+    foreignKey: "professionalId",
+    as: "subscription",
+  });
+  AgentSubscription.belongsTo(Professional, {
+    foreignKey: "professionalId",
+    targetKey: "id",
+    as: "professional",
+  });
+
 
 
   /* ==================RATING==========================================*/
 
   // Rating → Professional
   Rating.belongsTo(Professional, {
-    foreignKey: { name: "professionalId", allowNull: false },
+    foreignKey: "professionalId",
+    targetKey: "id",
     as: "professional",
   });
   Professional.hasMany(Rating, {
-    foreignKey: { name: "professionalId", allowNull: false },
+    foreignKey: "professionalId",
+    sourceKey: "id",
     as: "ratings",
   });
 
   /* ==================PROFESSIONAL APPLICATION=========================*/
-  // ProfessionalApplication → CountryProfessionalType
-  ProfessionalApplication.belongsTo(CountryProfessionalType, {
-    foreignKey: { name: "countryProfessionalTypeId", allowNull: false },
-    as: "countryConfig",
+  // Professional ↔ ProfessionalApplication (1:N - Historial)
+  Professional.hasMany(ProfessionalApplication, {
+    foreignKey: 'professionalId',
+    sourceKey: 'id',
+    as: 'applications'
   });
-  CountryProfessionalType.hasMany(ProfessionalApplication, {
-    foreignKey: { name: "countryProfessionalTypeId", allowNull: false },
-    as: "applications",
+  ProfessionalApplication.belongsTo(Professional, {
+    foreignKey: 'professionalId',
+    targetKey: 'id',
+    as: 'professional'
+  });
+
+  // Professional ↔ ProfessionalType
+  Professional.belongsTo(ProfessionalType, {
+    foreignKey: 'professionalTypeId',
+    as: 'professionalType'
+  });
+  ProfessionalType.hasMany(Professional, {
+    foreignKey: 'professionalTypeId',
+    as: 'professionals'
+  });
+
+  // Professional ↔ CountryProfessionalType
+  Professional.belongsTo(CountryProfessionalType, {
+    foreignKey: 'countryProfessionalTypeId',
+    as: 'countryConfig'
+  });
+  CountryProfessionalType.hasMany(Professional, {
+    foreignKey: 'countryProfessionalTypeId',
+    as: 'professionals'
   });
 
   // Country <-> ProfessionalType (N:M via CountryProfessionalType)

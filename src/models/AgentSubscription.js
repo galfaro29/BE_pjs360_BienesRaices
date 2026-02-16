@@ -17,10 +17,16 @@ export default (sequelize) => {
         comment: 'Identificador único de la suscripción del agente',
       },
 
-      agentUserId: {
+      professionalId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: 'ID del usuario con rol profesional que es dueño de la suscripción',
+        comment: 'ID del perfil profesional que es dueño de la suscripción',
+        references: {
+          model: 'Professional',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
 
       planType: {

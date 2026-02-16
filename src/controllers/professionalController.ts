@@ -1,6 +1,15 @@
 // **MODELO DE USUARIO**  
 import { Request, Response } from 'express';
-import { User, ProfessionalApplication, ProfessionalType, Country, CountryProfessionalType } from '../models/index.js';
+import { Op } from 'sequelize';
+import {
+  db as sequelize,
+  User,
+  Professional,
+  ProfessionalApplication,
+  ProfessionalType,
+  Country,
+  CountryProfessionalType
+} from '../models/index.js';
 import {
   ProfessionalApplicationPayload,
   CountryResponse,
@@ -24,6 +33,8 @@ const getProfessionalDashboard = (req: Request, res: Response) => {
  * — Guarda los datos enviados por el formulario de aplicación profesional
  */
 const createProfessionalApplication = async (req: Request<any, any, ProfessionalApplicationPayload>, res: Response) => {
+  const transaction = await sequelize.transaction();
+
   try {
     const {
       professionalTypeId,
@@ -38,123 +49,108 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       countryCode
     }: ProfessionalApplicationPayload = req.body;
 
-    // 🧩 Validaciones básicas
     const isCommission = engagementModel === 'commission';
-    if (!professionalTypeId || !displayName || !phone || !email || !engagementModel || (isCommission && !countryCode)) {
-      const missing = [];
-      if (!professionalTypeId) missing.push('professionalTypeId');
-      if (!displayName) missing.push('displayName');
-      if (!phone) missing.push('phone');
-      if (!email) missing.push('email');
-      if (!engagementModel) missing.push('engagementModel');
-      if (isCommission && !countryCode) missing.push('countryCode');
 
-      return res.status(400).json({
-        code: 'ERR_PROFESSIONAL_APPLICATION_VALIDATION',
-        message: `Missing required fields: ${missing.join(', ')}`
-      });
+    // 🔎 Validaciones básicas
+    if (!professionalTypeId || !displayName || !phone || !email || !engagementModel || (isCommission && !countryCode)) {
+      return res.status(400).json({ code: 'ERR_VALIDATION' });
     }
 
-    let countryProfessionalTypeId = null;
+    let countryConfig = null;
 
     if (isCommission) {
-      // 🌍 Validar configuración por país (CountryProfessionalType)
-      const countryConfig = await CountryProfessionalType.findOne({
+      countryConfig = await CountryProfessionalType.findOne({
         where: {
           countryCode,
           professionalTypeId,
           isEnabled: true,
           allowRegister: true
-        },
-        include: [
-          {
-            model: ProfessionalType,
-            as: 'professionalType',
-            where: { status: true }
-          },
-          {
-            model: Country,
-            as: 'country',
-            where: {
-              status: true,
-              allowRegister: true
-            }
-          }
-        ]
+        }
       });
 
       if (!countryConfig) {
         return res.status(403).json({
-          code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
-          message: 'This professional type is not enabled or the country is not active.'
+          code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED'
         });
       }
-      countryProfessionalTypeId = countryConfig.id;
     } else {
-      // 🆕 Para suscripciones, validar que el tipo profesional exista y sea de tipo suscripción
       const proType = await ProfessionalType.findOne({
-        where: { id: professionalTypeId, engagementModel: 'subscription', status: true }
+        where: {
+          id: professionalTypeId,
+          status: true,
+          engagementModel: { [Op.in]: ['subscription', 'both'] }
+        }
       });
 
       if (!proType) {
         return res.status(403).json({
-          code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED',
-          message: 'This professional type is not enabled for subscription.'
+          code: 'ERR_PROFESSIONAL_TYPE_NOT_ALLOWED'
         });
       }
     }
 
-    // 🔍 Validación de solicitudes previas
-    const whereClause: any = { email };
-    if (isCommission) {
-      whereClause.countryProfessionalTypeId = countryProfessionalTypeId;
+    // 👤 Buscar o crear Usuario (en un flujo real esto usaría el usuario autenticado)
+    // Para propósitos de esta refactorización, lo buscaremos por email
+    let user = await User.findOne({ where: { email } });
+    if (!user) {
+      // Si no existe, lo creamos (ajustar según lógica de negocio si requiere password, etc)
+      user = await User.create({
+        email,
+        name: displayName,
+        role: 'professional',
+        customId: `PRO-${Date.now()}` // Placeholder
+      }, { transaction });
     } else {
-      whereClause.professionalTypeId = professionalTypeId;
-      whereClause.engagementModel = 'subscription';
+      // Si ya existe, actualizamos su nombre si es necesario
+      await user.update({ name: displayName, role: 'professional' }, { transaction });
     }
 
-    const previousApplications = await ProfessionalApplication.findAll({ where: whereClause });
+    // 🔍 Validación anti-duplicados en Professional
+    const existingPro = await Professional.findOne({
+      where: {
+        userId: user.id,
+        engagementModel,
+        status: { [Op.in]: ['pending', 'active_basic', 'active_verified'] }
+      }
+    });
 
-    // 1️⃣ Bloquear si ya hay una solicitud activa (pendiente o aprobada)
-    const activeApp = previousApplications.find((app: any) => ['pending', 'approved'].includes(app.status));
-    if (activeApp) {
+    if (existingPro) {
+      await transaction.rollback();
       return res.status(409).json({
-        code: activeApp.status === 'pending' ? 'ERR_PROFESSIONAL_APPLICATION_PENDING' : 'ERR_PROFESSIONAL_ALREADY_APPROVED',
-        message: activeApp.status === 'pending'
-          ? 'You already have a pending application for this category.'
-          : 'You are already an approved professional in this category.'
+        code: existingPro.status === 'pending' ? 'ERR_PROFESSIONAL_APPLICATION_PENDING' : 'ERR_PROFESSIONAL_ALREADY_APPROVED'
       });
     }
 
-    // 2️⃣ Anti-Spam: Bloquear si ha sido rechazado 3 veces o más
-    const rejectedCount = previousApplications.filter((app: any) => app.status === 'rejected').length;
-    if (rejectedCount >= 3) {
-      return res.status(429).json({
-        code: 'ERR_PROFESSIONAL_APPLICATION_SPAM_LIMIT',
-        message: 'Maximum number of attempts reached for this category. Please contact support.'
-      });
-    }
-
-    // 📝 Crea la solicitud profesional
-    await ProfessionalApplication.create({
-      countryProfessionalTypeId,
+    // 🟢 1️⃣ Crear o Actualizar Perfil Profesional (Fuente de Verdad)
+    const [professional] = await Professional.upsert({
+      userId: user.id,
+      engagementModel,
       professionalTypeId: isCommission ? null : professionalTypeId,
-      displayName,
+      countryProfessionalTypeId: isCommission ? countryConfig.id : null,
+      status: 'pending',
       phone,
-      email,
       bio,
       hasVehicle,
       vehicleType,
       canTravel,
-      engagementModel,
+      available: true
+    }, { transaction, returning: true });
+
+    // 🟢 2️⃣ Crear registro en historial de aplicaciones
+    await ProfessionalApplication.create({
+      professionalId: professional.id,
       status: 'pending'
-    });
+    }, { transaction });
+
+    await transaction.commit();
 
     return res.status(201).json({
       code: 'SUCCESS_PROFESSIONAL_APPLICATION'
     });
+
   } catch (error) {
     console.error('❌ Error al crear la aplicación profesional:', error);
+    if (transaction) await transaction.rollback();
     return res.status(500).json({
       code: 'ERROR_PROFESSIONAL_APPLICATION'
     });

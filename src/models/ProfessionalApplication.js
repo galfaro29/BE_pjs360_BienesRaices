@@ -10,73 +10,23 @@ export default (sequelize) => {
         autoIncrement: true,
         comment: 'Identificador único de la solicitud de profesional (PK)',
       },
-      countryProfessionalTypeId: {
+      professionalId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
-        comment: 'Relación con la configuración de tipo profesional por país (FK a CountryProfessionalType.id)',
+        allowNull: false,
+        comment: 'Relación con el perfil profesional (FK a Professional.id)',
         references: {
-          model: 'CountryProfessionalType',
+          model: 'Professional',
           key: 'id',
         },
-      },
-      professionalTypeId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'ProfessionalType',
-          key: 'id',
-        },
-        comment: 'Representa el tipo profesional base cuando el modelo es subscription',
       },
       status: {
         type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         defaultValue: 'pending',
       },
-      displayName: {
-        type: DataTypes.STRING(120),
-        allowNull: false,
-        comment: 'Nombre público/Username que se mostrará si la solicitud es aprobada',
-      },
-      phone: {
-        type: DataTypes.STRING(30),
-        allowNull: false,
-        comment: 'Teléfono de contacto del profesional',
-      },
-      email: {
-        type: DataTypes.STRING(120),
-        allowNull: false,
-        validate: { isEmail: true },
-        comment: 'Correo electrónico visible para clientes (puede ser distinto al email de login)',
-      },
-      bio: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-        comment: 'Descripción breve del profesional, experiencia o presentación pública',
-      },
-      hasVehicle: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        comment: 'Indica si el profesional cuenta con vehículo propio (true / false)',
-      },
-      vehicleType: {
-        type: DataTypes.ENUM('car', 'motorcycle', 'none'),
-        defaultValue: 'none',
-      },
-      canTravel: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        comment: 'Indica si el profesional está dispuesto a desplazarse para atender clientes',
-      },
       rejectionReason: {
         type: DataTypes.TEXT,
         allowNull: true,
         comment: 'Motivo del rechazo en caso de que la solicitud sea rechazada',
-      },
-      engagementModel: {
-        type: DataTypes.ENUM('commission', 'subscription'),
-        allowNull: false,
-        defaultValue: 'subscription',
-        //comment: 'Modelo de contratación elegido por el profesional (comisión o suscripción)'
       },
       created_at: {
         type: DataTypes.DATE,
@@ -88,7 +38,7 @@ export default (sequelize) => {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
-        comment: 'Fecha y hora de la última actualización del registro (normalmente al revisar)',
+        comment: 'Fecha y hora de la última actualización del registro',
       },
     },
     {
@@ -97,19 +47,6 @@ export default (sequelize) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-      validate: {
-        checkConditionalFields() {
-          if (this.engagementModel === 'commission') {
-            if (this.countryProfessionalTypeId === null || this.countryProfessionalTypeId === undefined) {
-              throw new Error('countryProfessionalTypeId is required when engagementModel is commission');
-            }
-          } else if (this.engagementModel === 'subscription') {
-            if (this.professionalTypeId === null || this.professionalTypeId === undefined) {
-              throw new Error('professionalTypeId is required when engagementModel is subscription');
-            }
-          }
-        },
-      },
     }
   );
 

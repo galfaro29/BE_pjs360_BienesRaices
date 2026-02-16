@@ -15,10 +15,10 @@ export default (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment:
-          "ID del profesional calificado (referencia a Professional.userId)",
+          "ID del profesional calificado (referencia a Professional.id)",
         references: {
           model: "Professional",
-          key: "userId",
+          key: "id",
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",

@@ -201,7 +201,7 @@ const confirmUserAccount = async (req: any, res: any) => {
     const store = requestContext.getStore();
     if (store) {
       store.userId = user.customId;
-    }
+    } 
 
     await user.save();
 

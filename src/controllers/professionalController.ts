@@ -312,7 +312,79 @@ const getProfessionalProfileByUserId = async (req: Request, res: Response) => {
     console.error('❌ Error al obtener perfil profesional:', error);
     return res.status(500).json({ code: 'ERROR_GET_PROFESSIONAL_PROFILE' });
   }
-};  
+};
+
+/**
+ * updateProfessionalProfile
+ * — Controlador para PUT /professional/profile/:id
+ */
+const updateProfessionalProfile = async (req: Request, res: Response) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const { id } = req.params;
+
+    // Buscar el perfil profesional
+    const professional = await Professional.findOne({ where: { userId: id } });
+
+    if (!professional) {
+      await transaction.rollback();
+      return res.status(404).json({ code: 'ERR_PROFESSIONAL_NOT_FOUND' });
+    }
+
+    // Campos permitidos del modelo Professional
+    const allowedFields = [
+      'professionalTypeId',
+      'countryProfessionalTypeId',
+      'status',
+      'firstName',
+      'lastName',
+      'phone',
+      'bio',
+      'address',
+      'lat',
+      'lng',
+      'bankName',
+      'accountNumber',
+      'accountHolder',
+      'profileImage',
+      'hasVehicle',
+      'vehicleType',
+      'canTravel',
+      'available'
+    ];
+
+    const dataToUpdate: any = {};
+    allowedFields.forEach(field => {
+      if (req.body[field] !== undefined) {
+        dataToUpdate[field] = req.body[field];
+      }
+    });
+
+    // 1️⃣ Actualizar el modelo Professional (Fuente de Verdad)
+    await professional.update(dataToUpdate, { transaction });
+
+    // 2️⃣ 🟢 Insertar en ProfessionalApplication si NO existe el registro
+    // Solo insertamos si no existe, no se actualiza este modelo si ya existe.
+    await ProfessionalApplication.findOrCreate({
+      where: { professionalId: professional.id },
+      defaults: {
+        status: 'pending'
+      },
+      transaction
+    });
+
+    await transaction.commit();
+
+    return res.json({
+      code: 'SUCCESS_UPDATE_PROFESSIONAL_PROFILE',
+      professional
+    });
+  } catch (error) {
+    console.error('❌ Error al actualizar perfil profesional:', error);
+    if (transaction) await transaction.rollback();
+    return res.status(500).json({ code: 'ERROR_UPDATE_PROFESSIONAL_PROFILE' });
+  }
+};
 
 export {
   getProfessionalDashboard,
@@ -320,5 +392,6 @@ export {
   getCountry,
   getProfessionalTypes,
   getCountryTypeProfessional,
-  getProfessionalProfileByUserId
+  getProfessionalProfileByUserId,
+  updateProfessionalProfile
 };

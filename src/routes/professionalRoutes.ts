@@ -10,6 +10,7 @@ import {
   getProfessionalTypes,
   getCountryTypeProfessional,
   getProfessionalProfileByUserId
+  updateProfessionalProfile,
 } from '../controllers/professionalController.js';
 
 const router = express.Router();
@@ -56,6 +57,16 @@ router.get(
   authMiddleware,
   roleMiddleware("professional"),
   getProfessionalProfileByUserId
+);
+
+/* =========================
+   🔍 UPDATE PROFESSIONAL PROFILE BY USER ID
+========================= */
+router.put(
+  "/profile/:id",
+  authMiddleware,
+  roleMiddleware("professional"),
+  updateProfessionalProfile
 );
 
 

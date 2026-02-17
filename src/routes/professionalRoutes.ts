@@ -8,7 +8,8 @@ import {
   createProfessionalApplication,
   getCountry,
   getProfessionalTypes,
-  getCountryTypeProfessional
+  getCountryTypeProfessional,
+  getProfessionalProfileByUserId
 } from '../controllers/professionalController.js';
 
 const router = express.Router();
@@ -46,6 +47,16 @@ router.get('/country-professional', getCountryTypeProfessional);
  * - Recibe los datos del formulario de aplicación
  */
 router.post('/application', createProfessionalApplication);
+
+/* =========================
+   🔍 GET PROFESSIONAL PROFILE BY USER ID
+========================= */
+router.get(
+  "/profile/:id",
+  authMiddleware,
+  roleMiddleware("professional"),
+  getProfessionalProfileByUserId
+);
 
 
 export default router;

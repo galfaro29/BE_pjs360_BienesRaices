@@ -65,20 +65,10 @@ export default (sequelize) => {
         allowNull: true,
         comment: "Primer nombre del profesional",
       },
-      secondName: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        comment: "Segundo nombre del profesional (opcional)",
-      },
       lastName: {
         type: DataTypes.STRING(100),
         allowNull: true,
         comment: "Primer apellido del profesional",
-      },
-      secondLastName: {
-        type: DataTypes.STRING(100),
-        allowNull: true,
-        comment: "Segundo apellido del profesional (opcional)",
       },
       phone: {
         type: DataTypes.STRING(30),

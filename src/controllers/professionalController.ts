@@ -287,10 +287,38 @@ const getCountryTypeProfessional = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * getProfessionalProfileByUserId
+ * — Controlador para GET /professional/profile/:id
+ */
+const getProfessionalProfileByUserId = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const professional = await Professional.findOne({
+      where: { userId: id },
+      include: [
+        { model: User, as: 'user', attributes: ['id', 'name', 'email'] },
+        { model: ProfessionalType, as: 'professionalType', attributes: ['id', 'name'] }
+      ]
+    });
+    if (!professional) {
+      return res.status(404).json({ code: 'ERR_PROFESSIONAL_NOT_FOUND' });
+    }
+    return res.json({
+      code: 'SUCCESS_GET_PROFESSIONAL_PROFILE',
+      professional
+    });
+  } catch (error) {
+    console.error('❌ Error al obtener perfil profesional:', error);
+    return res.status(500).json({ code: 'ERROR_GET_PROFESSIONAL_PROFILE' });
+  }
+};  
+
 export {
   getProfessionalDashboard,
   createProfessionalApplication,
   getCountry,
   getProfessionalTypes,
-  getCountryTypeProfessional
+  getCountryTypeProfessional,
+  getProfessionalProfileByUserId
 };

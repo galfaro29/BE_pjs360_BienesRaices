@@ -1,7 +1,9 @@
 import express from 'express';
+import { uploadProfileImage } from "../middleware/uploads.js";
 import {
   authMiddleware,
   roleMiddleware,
+  ensureRequestContext,
 } from '../middleware/index.js';
 import {
   getProfessionalDashboard,
@@ -9,7 +11,7 @@ import {
   getCountry,
   getProfessionalTypes,
   getCountryTypeProfessional,
-  getProfessionalProfileByUserId
+  getProfessionalProfileByUserId,
   updateProfessionalProfile,
 } from '../controllers/professionalController.js';
 
@@ -59,13 +61,16 @@ router.get(
   getProfessionalProfileByUserId
 );
 
+
 /* =========================
-   🔍 UPDATE PROFESSIONAL PROFILE BY USER ID
+   📝 UPDATE PROFESIONAL PROFILE
 ========================= */
-router.put(
-  "/profile/:id",
+router.post(
+  "/profile",
   authMiddleware,
   roleMiddleware("professional"),
+  uploadProfileImage.single("image"), // 🖼️ Multer middleware
+  ensureRequestContext,               // 🔧 Mantiene AsyncLocalStorage
   updateProfessionalProfile
 );
 

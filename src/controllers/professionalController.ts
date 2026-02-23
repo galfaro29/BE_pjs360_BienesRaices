@@ -318,10 +318,10 @@ const getProfessionalProfileByUserId = async (req: Request, res: Response) => {
  * updateProfessionalProfile
  * — Controlador para PUT /professional/profile/:id
  */
-const updateProfessionalProfile = async (req: Request, res: Response) => {
+const updateProfessionalProfile = async (req: any, res: any) => {
   const transaction = await sequelize.transaction();
   try {
-    const { id } = req.params;
+    const id = req.user.id;
 
     // Buscar el perfil profesional
     const professional = await Professional.findOne({ where: { userId: id } });
@@ -356,9 +356,11 @@ const updateProfessionalProfile = async (req: Request, res: Response) => {
     const dataToUpdate: any = {};
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) {
-        dataToUpdate[field] = req.body[field];
+        // 🛠️ Sanitización: si es string vacío, convertir a null
+        dataToUpdate[field] = req.body[field] === '' ? null : req.body[field];
       }
     });
+    console.log({ dataToUpdate })
 
     // 1️⃣ Actualizar el modelo Professional (Fuente de Verdad)
     await professional.update(dataToUpdate, { transaction });

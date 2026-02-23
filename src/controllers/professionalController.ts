@@ -15,6 +15,7 @@ import {
   CountryResponse,
   ProfessionalTypeResponse
 } from '../types/professional/professional.types.js';
+import { deleteOldProfileImage } from '../middleware/uploads.js';
 
 /**
  * getProfessionalDashboard
@@ -353,6 +354,14 @@ const updateProfessionalProfile = async (req: any, res: any) => {
       'available'
     ];
 
+    // Capture new image if uploaded
+    const profileImage = req.file ? req.file.filename : null;
+
+    // Delete old image if a new one is uploaded
+    if (profileImage && professional.profileImage && profileImage !== professional.profileImage) {
+      deleteOldProfileImage(professional.profileImage);
+    }
+
     const dataToUpdate: any = {};
     allowedFields.forEach(field => {
       if (req.body[field] !== undefined) {
@@ -360,6 +369,15 @@ const updateProfessionalProfile = async (req: any, res: any) => {
         dataToUpdate[field] = req.body[field] === '' ? null : req.body[field];
       }
     });
+
+    // Priority to file upload
+    if (profileImage) {
+      dataToUpdate.profileImage = profileImage;
+    } else if (req.body.profileImage !== undefined) {
+      // If no file but field in body, might be wanting to clear it or it's the current one
+      dataToUpdate.profileImage = req.body.profileImage === '' ? null : req.body.profileImage;
+    }
+
     console.log({ dataToUpdate })
 
     // 1️⃣ Actualizar el modelo Professional (Fuente de Verdad)

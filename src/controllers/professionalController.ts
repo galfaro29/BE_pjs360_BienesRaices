@@ -99,11 +99,16 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
         email,
         name: displayName,
         role: 'professional',
-        customId: `PRO-${Date.now()}` // Placeholder
+        customId: `PRO-${Date.now()}`, // Placeholder
+        countryCode: isCommission ? countryCode : null
       }, { transaction });
     } else {
-      // Si ya existe, actualizamos su nombre si es necesario
-      await user.update({ name: displayName, role: 'professional' }, { transaction });
+      // Si ya existe, actualizamos su nombre y país si es necesario
+      await user.update({
+        name: displayName,
+        role: 'professional',
+        countryCode: isCommission ? countryCode : user.countryCode
+      }, { transaction });
     }
 
     // 🔍 Validación anti-duplicados en Professional
@@ -134,6 +139,7 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       hasVehicle,
       vehicleType,
       canTravel,
+      countryCode: isCommission ? countryCode : null,
       available: true
     }, { transaction, returning: true });
 
@@ -261,7 +267,8 @@ const getCountryTypeProfessional = async (req: Request, res: Response) => {
       name: country.name,
       professionalTypes: country.professionalTypeConfigs.map((cpt: any) => ({
         id: cpt.professionalType.id,
-        name: cpt.professionalType.name
+        name: cpt.professionalType.name,
+        countryProfessionalTypeId: cpt.id
       }))
     }));
 
@@ -298,7 +305,7 @@ const getProfessionalProfileByUserId = async (req: Request, res: Response) => {
     const professional = await Professional.findOne({
       where: { userId: id },
       include: [
-        { model: User, as: 'user', attributes: ['id', 'name', 'email'] },
+        { model: User, as: 'user', attributes: ['id', 'name', 'email', 'countryCode'] },
         { model: ProfessionalType, as: 'professionalType', attributes: ['id', 'name'] }
       ]
     });
@@ -336,6 +343,7 @@ const updateProfessionalProfile = async (req: any, res: any) => {
     const allowedFields = [
       'professionalTypeId',
       'countryProfessionalTypeId',
+      'countryCode',
       'status',
       'firstName',
       'lastName',

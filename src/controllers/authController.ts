@@ -22,6 +22,7 @@ const registerUser = async (req: RegisterRequest, res: Response) => {
     email,
     password,
     role,
+    engagementModel,
     locale: rawLocale,
     country = "CR",
   } = req.body;
@@ -122,12 +123,13 @@ const registerUser = async (req: RegisterRequest, res: Response) => {
     if (role === "professional") {
       await Professional.create({
         userId: user.id,
+        engagementModel: engagementModel || 'subscription',
         firstName: null,
         secondName: null,
         lastName: null,
         secondLastName: null,
         phone: null,
-        country: null,
+        countryCode: country || "CR",
         address: null,
         lat: null,
         lng: null,
@@ -136,7 +138,7 @@ const registerUser = async (req: RegisterRequest, res: Response) => {
         accountHolder: null,
         profileImage: null,
         hasVehicle: false,
-        vehicleType: null,
+        vehicleType: 'none',
         canTravel: false,
         available: true,
       });
@@ -201,7 +203,7 @@ const confirmUserAccount = async (req: any, res: any) => {
     const store = requestContext.getStore();
     if (store) {
       store.userId = user.customId;
-    } 
+    }
 
     await user.save();
 

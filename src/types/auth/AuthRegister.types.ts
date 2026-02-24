@@ -4,6 +4,7 @@ export interface AuthRegisterBody {
   email: string;
   password: string;
   role: "client" | "professional";
+  engagementModel?: "commission" | "subscription";
   locale?: string;
   country?: string;
 }
@@ -23,10 +24,10 @@ export interface AuthRegisterResponseSuccess {
 // Respuesta en caso de error
 export interface AuthRegisterResponseError {
   code:
-    | "ERR_INVALID_ROLE"
-    | "ERR_INVALID_PASSWORD"
-    | "ERR_EMAIL_EXISTS"
-    | "ERR_INTERNAL_SERVER";
+  | "ERR_INVALID_ROLE"
+  | "ERR_INVALID_PASSWORD"
+  | "ERR_EMAIL_EXISTS"
+  | "ERR_INTERNAL_SERVER";
 }
 
 // Express request tipado
@@ -35,4 +36,4 @@ export interface RegisterRequest extends Express.Request {
 }
 
 // Express response tipado
-export interface RegisterResponse extends Express.Response {}
+export interface RegisterResponse extends Express.Response { }

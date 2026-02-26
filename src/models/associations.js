@@ -31,6 +31,11 @@ export default (models) => {
     PropertySchemaLink,
     ProfessionalType,
     CountryProfessionalType,
+    StaffProfile,
+    StaffPaymentInfo,
+    StaffPayment,
+    StaffInteraction,
+    StaffRating,
   } = models;
 
   /* ========================USER (Common)=============================*/
@@ -324,6 +329,88 @@ export default (models) => {
   PropertySchemaLink.belongsTo(PropertyType, {
     foreignKey: 'propertyTypeId',
     as: 'propertyType',
+  });
+
+  /* ================== STAFF (Managers) ========================= */
+  // User ↔ StaffProfile (1:1)
+  User.hasOne(StaffProfile, {
+    foreignKey: 'userId',
+    as: 'staffProfile',
+  });
+  StaffProfile.belongsTo(User, {
+    foreignKey: 'userId',
+    as: 'user',
+  });
+
+  // StaffProfile ↔ StaffPaymentInfo (1:1)
+  StaffProfile.hasOne(StaffPaymentInfo, {
+    foreignKey: 'staffId',
+    as: 'paymentInfo',
+  });
+  StaffPaymentInfo.belongsTo(StaffProfile, {
+    foreignKey: 'staffId',
+    as: 'staff',
+  });
+
+  // StaffProfile ↔ StaffPayment (1:N - Historial)
+  StaffProfile.hasMany(StaffPayment, {
+    foreignKey: 'staffId',
+    as: 'payments',
+  });
+  StaffPayment.belongsTo(StaffProfile, {
+    foreignKey: 'staffId',
+    as: 'staff',
+  });
+
+  /* ================== STAFF INTERACTIONS & RATINGS ================= */
+  // StaffProfile ↔ StaffInteraction (1:N)
+  StaffProfile.hasMany(StaffInteraction, {
+    foreignKey: 'staffId',
+    as: 'interactions',
+  });
+  StaffInteraction.belongsTo(StaffProfile, {
+    foreignKey: 'staffId',
+    as: 'staff',
+  });
+
+  // Client ↔ StaffInteraction (0:N)
+  Client.hasMany(StaffInteraction, {
+    foreignKey: 'clientId',
+    as: 'staffInteractions',
+  });
+  StaffInteraction.belongsTo(Client, {
+    foreignKey: 'clientId',
+    as: 'client',
+  });
+
+  // Professional ↔ StaffInteraction (0:N)
+  Professional.hasMany(StaffInteraction, {
+    foreignKey: 'professionalId',
+    as: 'staffInteractions',
+  });
+  StaffInteraction.belongsTo(Professional, {
+    foreignKey: 'professionalId',
+    as: 'professional',
+  });
+
+  // StaffInteraction ↔ StaffRating (1:1 o 1:N, usualmente 1:1 por interacción)
+  StaffInteraction.hasOne(StaffRating, {
+    foreignKey: 'interactionId',
+    as: 'rating',
+  });
+  StaffRating.belongsTo(StaffInteraction, {
+    foreignKey: 'interactionId',
+    as: 'interaction',
+  });
+
+  // StaffProfile ↔ StaffRating (1:N para promedios rápidos)
+  StaffProfile.hasMany(StaffRating, {
+    foreignKey: 'staffId',
+    as: 'ratings',
+  });
+  StaffRating.belongsTo(StaffProfile, {
+    foreignKey: 'staffId',
+    as: 'staff',
   });
 
   // User <-> AuditLog (Preserved)

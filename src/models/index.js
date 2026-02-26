@@ -32,6 +32,11 @@ import propertyCommercialDetailModel from "./PropertyCommercialDetail.js";
 import propertySchemaLinkModel from "./PropertySchemaLink.js";
 import professionalTypeModel from "./ProfessionalType.js";
 import countryProfessionalTypeModel from "./CountryProfessionalType.js";
+import staffProfileModel from "./StaffProfile.js";
+import staffPaymentInfoModel from "./StaffPaymentInfo.js";
+import staffPaymentModel from "./StaffPayment.js";
+import staffInteractionModel from "./StaffInteraction.js";
+import staffRatingModel from "./StaffRating.js";
 import applyAssociations from "./associations.js";
 import addAuditHooks from "../helpers/auditHooks.js"; //Auditoría automática (INSERT/UPDATE/DELETE) sin tocar
 //controladores, usando AsyncLocalStorage. Incluye: - requestContext global - middleware Express -
@@ -69,6 +74,11 @@ const models = {
   PropertySchemaLink: propertySchemaLinkModel(db),
   ProfessionalType: professionalTypeModel(db),
   CountryProfessionalType: countryProfessionalTypeModel(db),
+  StaffProfile: staffProfileModel(db),
+  StaffPaymentInfo: staffPaymentInfoModel(db),
+  StaffPayment: staffPaymentModel(db),
+  StaffInteraction: staffInteractionModel(db),
+  StaffRating: staffRatingModel(db),
 };
 
 
@@ -113,6 +123,11 @@ export const {
   PropertySchemaLink,
   ProfessionalType,
   CountryProfessionalType,
+  StaffProfile,
+  StaffPaymentInfo,
+  StaffPayment,
+  StaffInteraction,
+  StaffRating,
 } = models;
 
 export { db };

@@ -30,15 +30,6 @@ export default (sequelize) => {
         defaultValue: 'subscription',
         //comment: 'Modelo de contratación del profesional'
       },
-      countryCode: {
-        type: DataTypes.STRING(5),
-        allowNull: true,
-        comment: "Código del país del profesional (referencia a Country.code)",
-        references: {
-          model: "Country",
-          key: "code",
-        },
-      },
       professionalTypeId: {
         type: DataTypes.INTEGER,
         allowNull: true,

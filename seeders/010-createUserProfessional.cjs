@@ -28,6 +28,7 @@ module.exports = {
                     role: 'professional',
                     isActive: true,
                     locale: 'es',
+                    countryCode: 'CR', // 🟢 Se define aquí ahora
                     createdAt: now,
                     updatedAt: now
                 });
@@ -56,7 +57,7 @@ module.exports = {
                     professionals.push({
                         userId: userId,
                         engagementModel: i <= 3 ? 'commission' : 'subscription',
-                        countryCode: 'CR', // Costa Rica por defecto o null
+                        // 🔴 countryCode eliminado de aquí
                         professionalTypeId: 1, // 'Agente inmobiliario' según seeder 008
                         status: 'active_verified',
                         firstName: 'Profe',

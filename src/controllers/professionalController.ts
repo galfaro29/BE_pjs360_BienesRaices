@@ -139,7 +139,6 @@ const createProfessionalApplication = async (req: Request<any, any, Professional
       hasVehicle,
       vehicleType,
       canTravel,
-      countryCode: isCommission ? countryCode : null,
       available: true
     }, { transaction, returning: true });
 
@@ -343,7 +342,6 @@ const updateProfessionalProfile = async (req: any, res: any) => {
     const allowedFields = [
       'professionalTypeId',
       'countryProfessionalTypeId',
-      'countryCode',
       'status',
       'firstName',
       'lastName',
@@ -392,9 +390,9 @@ const updateProfessionalProfile = async (req: any, res: any) => {
     await professional.update(dataToUpdate, { transaction });
 
     // 2️⃣ 🟢 Actualizar el countryCode en el modelo User si viene en los datos
-    if (dataToUpdate.countryCode !== undefined) {
+    if (req.body.countryCode !== undefined) {
       await User.update(
-        { countryCode: dataToUpdate.countryCode },
+        { countryCode: req.body.countryCode === '' ? null : req.body.countryCode },
         { where: { id: id }, transaction }
       );
     }

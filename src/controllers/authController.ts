@@ -82,6 +82,7 @@ const registerUser = async (req: RegisterRequest, res: Response) => {
       token: generarId(),
       confirmado: false,
       customId,
+      countryCode: country || "CR",
     });
 
     // 6. Crear perfil de cliente
@@ -100,7 +101,6 @@ const registerUser = async (req: RegisterRequest, res: Response) => {
         categoryCode: "C",
 
         address: null,
-        countryCode: country || "CR",
         administrativeAreaLevel1: null,
         administrativeAreaLevel2: null,
         city: null,
@@ -129,7 +129,6 @@ const registerUser = async (req: RegisterRequest, res: Response) => {
         lastName: null,
         secondLastName: null,
         phone: null,
-        countryCode: country || "CR",
         address: null,
         lat: null,
         lng: null,

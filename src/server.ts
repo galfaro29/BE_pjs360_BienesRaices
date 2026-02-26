@@ -11,6 +11,9 @@ import {
   adminRouter,
   professionalRouter,
   clientRouter,
+  managerRouter,
+  financeRouter,
+  operationRouter,
 } from './routes/index.js';
 
 // 👉 Importar middleware de contexto para auditoría
@@ -108,6 +111,9 @@ app.use('/auth', authRouter);
 app.use('/admin', adminRouter);
 app.use('/professional', professionalRouter);
 app.use('/client', clientRouter);
+app.use('/manager', managerRouter);
+app.use('/finance', financeRouter);
+app.use('/operation', operationRouter);
 
 
 // 👉 Iniciar el servidor en el puerto definido

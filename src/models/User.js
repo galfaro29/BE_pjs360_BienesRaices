@@ -50,7 +50,7 @@ export default (sequelize) => {
       },
 
       role: {
-        type: DataTypes.ENUM('admin', 'manager', 'finance', 'operations', 'professional', 'client'),
+        type: DataTypes.ENUM('admin', 'manager', 'finance', 'operation', 'professional', 'client'),
         allowNull: false,
         defaultValue: 'client',
         //comment: 'Rol del usuario dentro del sistema (admin, manager, finance, operations, professional, client)',

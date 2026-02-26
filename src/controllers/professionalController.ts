@@ -391,7 +391,15 @@ const updateProfessionalProfile = async (req: any, res: any) => {
     // 1️⃣ Actualizar el modelo Professional (Fuente de Verdad)
     await professional.update(dataToUpdate, { transaction });
 
-    // 2️⃣ 🟢 Insertar en ProfessionalApplication si NO existe el registro
+    // 2️⃣ 🟢 Actualizar el countryCode en el modelo User si viene en los datos
+    if (dataToUpdate.countryCode !== undefined) {
+      await User.update(
+        { countryCode: dataToUpdate.countryCode },
+        { where: { id: id }, transaction }
+      );
+    }
+
+    // 3️⃣ 🟢 Insertar en ProfessionalApplication si NO existe el registro
     // Solo insertamos si no existe, no se actualiza este modelo si ya existe.
     await ProfessionalApplication.findOrCreate({
       where: { professionalId: professional.id },

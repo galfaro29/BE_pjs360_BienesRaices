@@ -16,30 +16,36 @@ const router = express.Router();
 // Crea el primer usuario admin al iniciar la app
 router.post('/init', createInitialAdminAccount);
 
-// Devuelve estadísticas y datos clave del dashboard (solo para admins)
-// - authMiddleware: verifica token JWT
-// - roleMiddleware('admin'): solo usuarios con rol "admin"
+// Devuelve estadísticas y datos clave del dashboard (compartido)
 router.get(
   '/dashboard',
   authMiddleware,
-  roleMiddleware('admin'),
+  roleMiddleware('admin', 'manager'),
   getAdminDashboard
 );
 
+// Lista todos los profesionales registrados (compartido)
+router.get(
+  '/professionals',
+  authMiddleware,
+  roleMiddleware('admin', 'manager'),
+  listProfessionals
+);
 
-// Lista todos los profesionales registrados
-router.get('/professionals', listProfessionals);
-
-// Activa o desactiva a un profesional (solo admins)
-// - authMiddleware + roleMiddleware('admin')
+// Activa o desactiva a un profesional (compartido)
 router.put(
   '/professionals/:id/activate',
   authMiddleware,
-  roleMiddleware('admin'),
+  roleMiddleware('admin', 'manager'),
   activateProfessionalAccount
 );
 
-// Elimina completamente a un profesional de la plataforma
-router.delete('/professionals/:id', deleteProfessionalAccount);
+// Elimina completamente a un profesional (Solo Admin)
+router.delete(
+  '/professionals/:id',
+  authMiddleware,
+  roleMiddleware('admin'),
+  deleteProfessionalAccount
+);
 
 export default router;

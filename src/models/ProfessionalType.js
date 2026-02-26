@@ -13,7 +13,7 @@ export default (sequelize) => {
             name: {
                 type: DataTypes.STRING(50),
                 allowNull: false,
-                comment: "Nombre legible del tipo de profesional (ej: 'Agente Inmobiliario', 'Valuador')",
+                comment: "Nombre legible del tipo de profesional (ej: 'Profesional Inmobiliario', 'Valuador')",
             },
             status: {
                 type: DataTypes.BOOLEAN,

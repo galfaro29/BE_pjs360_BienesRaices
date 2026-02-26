@@ -13,8 +13,8 @@ const AUDIT_MODELS: string[] = [
     'Payment',
     'Deposit',
     'PropertyPublication',
-    'AgentSubscription',
-    'ClientSubscription'
+    'ProfessionalPricingModel',
+    'ClientPricingModel'
 ];
 
 /**

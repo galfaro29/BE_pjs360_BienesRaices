@@ -18,8 +18,8 @@ export default (models) => {
     PropertyOfferType,
     PropertyAmenity,
     PropertyImage,
-    ClientSubscription,
-    AgentSubscription,
+    ClientPricingModel,
+    ProfessionalPricingModel,
     PropertyPublication,
     AuditLog,
     PropertyResidentialDetail,
@@ -57,12 +57,12 @@ export default (models) => {
     as: "client",
   });
 
-  // Client → ClientSubscription
-  Client.hasOne(ClientSubscription, {
+  // Client → ClientPricingModel
+  Client.hasOne(ClientPricingModel, {
     foreignKey: "clientId",
-    as: "subscription",
+    as: "pricingModel",
   });
-  ClientSubscription.belongsTo(Client, {
+  ClientPricingModel.belongsTo(Client, {
     foreignKey: "clientId",
     targetKey: "userId",
     as: "client",
@@ -105,12 +105,12 @@ export default (models) => {
     as: "professional",
   });
 
-  // Professional → AgentSubscription
-  Professional.hasOne(AgentSubscription, {
+  // Professional → ProfessionalPricingModel
+  Professional.hasOne(ProfessionalPricingModel, {
     foreignKey: "professionalId",
-    as: "subscription",
+    as: "pricingModel",
   });
-  AgentSubscription.belongsTo(Professional, {
+  ProfessionalPricingModel.belongsTo(Professional, {
     foreignKey: "professionalId",
     targetKey: "id",
     as: "professional",

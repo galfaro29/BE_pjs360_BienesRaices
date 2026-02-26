@@ -4,7 +4,7 @@ export default (sequelize) => {
     /**
      * Modelo de Publicaciones de Propiedades.
      * Gestiona el tipo de visibilidad, prioridad y vigencia de una propiedad en el portal,
-     * vinculándola opcionalmente a una suscripción de cliente o agente.
+     * vinculándola opcionalmente a una suscripción de cliente o profesional.
      */
     const PropertyPublication = sequelize.define(
         'PropertyPublication',
@@ -22,19 +22,19 @@ export default (sequelize) => {
                 comment: 'ID de la propiedad publicada'
             },
             publicationType: {
-                type: DataTypes.ENUM('LIBRE', 'DESTACADA', 'PLUS', 'AGENTE'),
+                type: DataTypes.ENUM('LIBRE', 'DESTACADA', 'PLUS', 'PROFESSIONAL'),
                 allowNull: false,
                 defaultValue: 'LIBRE'
             },
-            clientSubscriptionId: {
+            clientPricingModelId: {
                 type: DataTypes.UUID,
                 allowNull: true,
-                comment: 'Vínculo opcional con suscripción de cliente'
+                comment: 'Vínculo opcional con plan de precio de cliente'
             },
-            agentSubscriptionId: {
+            professionalPricingModelId: {
                 type: DataTypes.UUID,
                 allowNull: true,
-                comment: 'Vínculo opcional con suscripción de agente'
+                comment: 'Vínculo opcional con plan de precio profesional'
             },
             status: {
                 type: DataTypes.ENUM('ACTIVA', 'INACTIVA', 'EXPIRADA'),

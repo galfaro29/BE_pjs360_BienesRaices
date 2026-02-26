@@ -2,23 +2,23 @@ import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
     /**
-     * Modelo de Suscripciones.
+     * Modelo de Planes de Precio para Clientes.
      * Controla los límites de la cuenta (como max_active_props) pero no propiedades individuales.
      */
-    const ClientSubscription = sequelize.define(
-        'ClientSubscription',
+    const ClientPricingModel = sequelize.define(
+        'ClientPricingModel',
         {
             id: {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4,
                 allowNull: false,
                 primaryKey: true,
-                comment: 'Identificador único de la suscripción de cliente'
+                comment: 'Identificador único del plan de precio de cliente'
             },
             clientId: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                comment: 'ID del perfil cliente dueño de la suscripción',
+                comment: 'ID del perfil cliente dueño del plan',
                 references: {
                     model: 'Client',
                     key: 'userId',
@@ -55,11 +55,11 @@ export default (sequelize) => {
             },
         },
         {
-            tableName: 'ClientSubscription',
+            tableName: 'ClientPricingModel',
             freezeTableName: true,
             timestamps: true,
         }
     );
 
-    return ClientSubscription;
+    return ClientPricingModel;
 };

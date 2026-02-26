@@ -19,8 +19,8 @@ import propertyTypeModel from "./PropertyType.js";
 import propertyOfferTypeModel from "./PropertyOfferType.js";
 import propertyAmenityModel from "./PropertyAmenity.js";
 import propertyImageModel from "./PropertyImage.js";
-import clientSubscriptionModel from "./ClientSubscription.js";
-import agentSubscriptionModel from "./AgentSubscription.js";
+import clientPricingModelModel from "./ClientPricingModel.js";
+import professionalPricingModelModel from "./ProfessionalPricingModel.js";
 import propertyPublicationModel from "./PropertyPublication.js";
 import auditLogModel from "./AuditLog.js";
 import propertyResidentialDetailModel from "./PropertyResidentialDetail.js";
@@ -56,8 +56,8 @@ const models = {
   PropertyOfferType: propertyOfferTypeModel(db),
   PropertyAmenity: propertyAmenityModel(db),
   PropertyImage: propertyImageModel(db),
-  ClientSubscription: clientSubscriptionModel(db),
-  AgentSubscription: agentSubscriptionModel(db),
+  ClientPricingModel: clientPricingModelModel(db),
+  ProfessionalPricingModel: professionalPricingModelModel(db),
   PropertyPublication: propertyPublicationModel(db),
   AuditLog: auditLogModel(db),
   PropertyResidentialDetail: propertyResidentialDetailModel(db),
@@ -100,8 +100,8 @@ export const {
   PropertyOfferType,
   PropertyAmenity,
   PropertyImage,
-  ClientSubscription,
-  AgentSubscription,
+  ClientPricingModel,
+  ProfessionalPricingModel,
   PropertyPublication,
   AuditLog,
   PropertyResidentialDetail,

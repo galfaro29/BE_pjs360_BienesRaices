@@ -2,25 +2,25 @@ import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
   /**
-   * Modelo de Suscripciones para Agentes / Profesionales.
-   * Controla los planes, límites y vigencia de los agentes o agencias
+   * Modelo de Planes de Precio para Profesionales.
+   * Controla los planes, límites y vigencia de los profesionales o agencias
    * dentro del sistema (ej. cantidad de propiedades activas, clientes, etc.).
    */
-  const AgentSubscription = sequelize.define(
-    'AgentSubscription',
+  const ProfessionalPricingModel = sequelize.define(
+    'ProfessionalPricingModel',
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
         primaryKey: true,
-        comment: 'Identificador único de la suscripción del agente',
+        comment: 'Identificador único del plan de precio del profesional',
       },
 
       professionalId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: 'ID del perfil profesional que es dueño de la suscripción',
+        comment: 'ID del perfil profesional que es dueño del plan',
         references: {
           model: 'Professional',
           key: 'id',
@@ -30,23 +30,23 @@ export default (sequelize) => {
       },
 
       planType: {
-        type: DataTypes.ENUM('AGENTE_PRO', 'AGENCIA'),
+        type: DataTypes.ENUM('PROFESSIONAL_PRO', 'AGENCIA'),
         allowNull: false,
-        defaultValue: 'AGENTE_PRO',
-        //comment: 'Tipo de plan contratado por el agente (AGENTE_PRO o AGENCIA)',
+        defaultValue: 'PROFESSIONAL_PRO',
+        //comment: 'Tipo de plan contratado por el profesional (PROFESSIONAL_PRO o AGENCIA)',
       },
 
       status: {
         type: DataTypes.ENUM('ACTIVA', 'EXPIRADA'),
         allowNull: false,
         defaultValue: 'ACTIVA',
-        //comment: 'Estado actual de la suscripción (ACTIVA o EXPIRADA)',
+        //comment: 'Estado actual del plan (ACTIVA o EXPIRADA)',
       },
 
       maxActiveProps: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: 'Cantidad máxima de propiedades que el agente puede tener activas simultáneamente',
+        comment: 'Cantidad máxima de propiedades que el profesional puede tener activas simultáneamente',
       },
 
       maxClients: {
@@ -59,22 +59,22 @@ export default (sequelize) => {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
-        comment: 'Fecha de inicio del periodo actual de la suscripción',
+        comment: 'Fecha de inicio del periodo actual del plan',
       },
 
       expiresAt: {
         type: DataTypes.DATE,
         allowNull: true,
-        comment: 'Fecha de expiración del periodo actual de la suscripción',
+        comment: 'Fecha de expiración del periodo actual del plan',
       },
     },
     {
-      tableName: 'AgentSubscription',
+      tableName: 'ProfessionalPricingModel',
       freezeTableName: true, // evita pluralización automática
       timestamps: true,
-      comment: 'Suscripciones y planes contratados por agentes o agencias',
+      comment: 'Planes de precio y límites contratados por profesionales o agencias',
     }
   );
 
-  return AgentSubscription;
+  return ProfessionalPricingModel;
 };

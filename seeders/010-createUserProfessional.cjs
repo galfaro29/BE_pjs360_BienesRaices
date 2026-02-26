@@ -58,7 +58,7 @@ module.exports = {
                         userId: userId,
                         engagementModel: i <= 3 ? 'commission' : 'subscription',
                         // 🔴 countryCode eliminado de aquí
-                        professionalTypeId: 1, // 'Agente inmobiliario' según seeder 008
+                        professionalTypeId: 1, // 'Profesional inmobiliario' según seeder 008
                         status: 'active_verified',
                         firstName: 'Profe',
                         lastName: `${i} Falso`,

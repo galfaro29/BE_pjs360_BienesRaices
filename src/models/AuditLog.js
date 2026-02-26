@@ -50,7 +50,7 @@ export default (sequelize) => {
                 comment: 'Estado del registro después del cambio (en INSERT/UPDATE/RESTORE)'
             },
             source: {
-                type: DataTypes.ENUM('USER', 'ADMIN', 'AGENT', 'SYSTEM'),
+                type: DataTypes.ENUM('USER', 'ADMIN', 'PROFESSIONAL', 'SYSTEM'),
                 defaultValue: 'SYSTEM'
             },
             reason: {
